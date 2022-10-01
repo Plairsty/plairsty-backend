@@ -1,0 +1,25 @@
+syntax="proto3";
+
+package upload;
+option go_package="upload/uploadPb";
+
+message ImageInfo {
+  string moodle_id = 1;
+  string image_type = 2;
+}
+
+message UploadProfileImageRequest {
+  oneof data {
+    ImageInfo info = 1;
+    bytes chunk_data = 2;
+  };
+}
+
+message UploadImageResponse {
+  string url = 1;
+  uint32 size = 2;
+}
+
+service UploadService {
+  rpc UploadProfileImage(stream UploadProfileImageRequest) returns (UploadImageResponse) {}
+}
