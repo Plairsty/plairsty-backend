@@ -11,7 +11,10 @@ type Config struct {
 	Env     string
 	Version string
 	DB      struct {
-		DSN string
+		DSN         string
+		MaxOpenConn int
+		MaxIdleConn int
+		MaxIdleTime string
 	}
 }
 

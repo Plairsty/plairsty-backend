@@ -33,6 +33,13 @@ func main() {
 	flag.StringVar(&cfg.Port, "port", ":4000", "API server port")
 	flag.StringVar(&cfg.Env, "env", "development", "Environment (development|staging|production)")
 	flag.StringVar(&cfg.DB.DSN, "db-dsn", os.Getenv("PLAIRSTY_DB_DSN"), "PostgreSQL DSN")
+
+	// Read the connection pool settings from command-line flags into the config struct.
+	// Notice the default values that we're using?
+	flag.IntVar(&cfg.DB.MaxOpenConn, "db-max-open-conn", 25, "PostgreSQL max open connections")
+	flag.IntVar(&cfg.DB.MaxIdleConn, "db-max-idle-conn", 25, "PostgreSQL max idle connections")
+	flag.StringVar(&cfg.DB.MaxIdleTime, "db-max-idle-time", "15m", "PostgreSQL max connection idle time")
+
 	flag.Parse()
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 	app := model.NewApplication(cfg, logger)
@@ -99,12 +106,26 @@ func openDB(cfg model.Config) (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// Set the maximum number of open (in-use + idle) connections in the pool. Note that
+	// passing a value less than or equal to 0 will mean there is no limit.
+	db.SetMaxOpenConns(cfg.DB.MaxOpenConn)
+	// Set the maximum number of idle connections in the pool. Again, passing a value
+	// less than or equal to 0 will mean there is no limit.
+	db.SetMaxIdleConns(cfg.DB.MaxIdleConn)
+	// Use the time.ParseDuration() function to convert the idle timeout duration string
+	// to a time.Duration type.
+	duration, err := time.ParseDuration(cfg.DB.MaxIdleTime)
+	if err != nil {
+		return nil, err
+	}
+	// Set the maximum idle timeout.
+	db.SetConnMaxIdleTime(duration)
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	err = db.PingContext(ctx)
 	if err != nil {
 		return nil, err
 	}
-	log.Println("Database connection successfully opened")
 	return db, nil
 }
