@@ -5,24 +5,51 @@ import (
 	"awesomeProject/internal/interfaces/interceptors"
 	sys "awesomeProject/internal/proto/health"
 	studentPb "awesomeProject/internal/proto/student"
+	"context"
+	"database/sql"
 	"flag"
+	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
 	"os"
+	"time"
 )
 
 const version = "1.0.0"
 
+func init() {
+	// Load environment variables
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+}
 func main() {
 	var cfg model.Config
 	cfg.Version = version
 	flag.StringVar(&cfg.Port, "port", ":4000", "API server port")
 	flag.StringVar(&cfg.Env, "env", "development", "Environment (development|staging|production)")
+	flag.StringVar(&cfg.DB.DSN, "db-dsn", os.Getenv("PLAIRSTY_DB_DSN"), "PostgreSQL DSN")
 	flag.Parse()
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 	app := model.NewApplication(cfg, logger)
+
+	// Open database connection
+	db, err := openDB(cfg)
+	if err != nil {
+		logger.Fatal(err)
+	}
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			logger.Fatal(err)
+		}
+	}(db)
+
+	// Register gRPC server
 	lis, err := net.Listen("tcp", cfg.Port)
 	if err != nil {
 		logger.Fatal(err)
@@ -65,5 +92,19 @@ func main() {
 	if err := server.Serve(lis); err != nil {
 		logger.Fatal(err)
 	}
+}
 
+func openDB(cfg model.Config) (*sql.DB, error) {
+	db, err := sql.Open("postgres", cfg.DB.DSN)
+	if err != nil {
+		return nil, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	err = db.PingContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	log.Println("Database connection successfully opened")
+	return db, nil
 }

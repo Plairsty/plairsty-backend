@@ -9,7 +9,17 @@ message Student {
   string last_name = 3;
   string middle_name = 4;
   string email = 5;
-  int64 phone = 6;
+
+  enum PhoneType {
+    MOBILE = 0;
+    HOME = 1;
+  }
+  message PhoneNumber {
+    string number = 1;
+    PhoneType type = 2;
+  }
+
+  repeated PhoneNumber phones = 6;
 }
 
 message CreateStudentRequest {
@@ -21,11 +31,11 @@ message CreateStudentResponse {
 }
 
 message GetStudentRequest {
-  int32 id = 1;
+  uint64 id = 1;
 }
 
 message GetStudentResponse {
-  Student student = 1;
+  repeated Student student = 1;
 }
 
 service StudentService {

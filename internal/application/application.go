@@ -10,6 +10,9 @@ type Config struct {
 	Port    string
 	Env     string
 	Version string
+	DB      struct {
+		DSN string
+	}
 }
 
 type Application struct {
