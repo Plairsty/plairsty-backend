@@ -5,6 +5,7 @@ import (
 	"awesomeProject/internal/interfaces/interceptors"
 	sys "awesomeProject/internal/proto/health"
 	studentPb "awesomeProject/internal/proto/student"
+	"awesomeProject/utils"
 	"context"
 	"database/sql"
 	"flag"
@@ -21,6 +22,7 @@ import (
 const version = "1.0.0"
 
 func init() {
+	utils.DevBanner()
 	// Load environment variables
 	err := godotenv.Load()
 	if err != nil {
