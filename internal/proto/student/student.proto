@@ -18,8 +18,36 @@ message Student {
     string number = 1;
     PhoneType type = 2;
   }
-
   repeated PhoneNumber phones = 6;
+
+  // Optional fields
+
+  // Assuming there are only 4 types of AcademicStatus
+  // Currently assuming that only one cycle of admission is possible
+  //
+  // There won't be a case where 2 students have the same academic status
+  // But different semesters
+  enum academicStatus {
+    FRESHMAN = 0;
+    SOPHOMORE = 1;
+    JUNIOR = 2;
+    SENIOR = 3;
+  }
+
+  optional academicStatus status = 7;
+
+  optional string field_of_study = 8; // e.g. Computer Science
+  optional bool is_banned = 9;
+}
+
+message UpdateStudentRequest {
+  // Don't update the id
+  Student student = 1;
+}
+
+message UpdateStudentResponse {
+  bool success = 1;
+  string message = 2;
 }
 
 message CreateStudentRequest {
@@ -28,8 +56,19 @@ message CreateStudentRequest {
 
 message CreateStudentResponse {
   bool success = 1;
+  string message = 2;
 }
 
+message DeleteStudentRequest {
+  int32 id = 1;
+}
+
+message DeleteStudentResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// Any user can execute this
 message GetStudentRequest {
   uint64 id = 1;
 }
@@ -39,6 +78,14 @@ message GetStudentResponse {
 }
 
 service StudentService {
-  rpc CreateStudent(CreateStudentRequest) returns (CreateStudentResponse);
+  // Any user can call this
   rpc GetStudent(GetStudentRequest) returns (GetStudentResponse);
+
+  // Only admin can call this to create a new student
+  rpc CreateStudent(CreateStudentRequest) returns (CreateStudentResponse);
+  // Only admin can call this to delete a student
+  rpc DeleteStudent(DeleteStudentRequest) returns (DeleteStudentResponse);
+
+  // Only student of his id can call this
+  rpc UpdateStudent(UpdateStudentRequest) returns (UpdateStudentResponse);
 }

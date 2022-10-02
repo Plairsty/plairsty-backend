@@ -16,8 +16,10 @@ func (app *Application) CreateStudent(
 	if !utils.EmailValidator(in.Student.Email) {
 		return nil, errors.New("invalid email")
 	}
+
 	return &studentPb.CreateStudentResponse{
 		Success: true,
+		Message: "student created",
 	}, nil
 }
 
