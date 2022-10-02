@@ -10,6 +10,7 @@ message HealthCheckResponse {
   string version = 3;
 }
 
+
 service HealthCheck {
   rpc Check(HealthCheckRequest) returns (HealthCheckResponse) {}
 }
