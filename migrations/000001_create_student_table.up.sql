@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS students
 (
-    ID          int                         NOT NULL,
+    ID          int                         NOT NULL PRIMARY KEY,
     FIRST_NAME  varchar(50)                 NOT NULL,
     MIDDLE_NAME varchar(50)                 NOT NULL,
     LAST_NAME   varchar(50)                 NOT NULL,
@@ -11,8 +11,7 @@ CREATE TABLE IF NOT EXISTS students
 
 CREATE TABLE IF NOT EXISTS phone
 (
-    ID bigserial PRIMARY KEY,
-    phone int NOT NULL,
-    TYPE  VARCHAR(50) NOT NULL,
-    FOREIGN KEY (ID) REFERENCES students (ID)
+    id         bigserial   NOT NULL PRIMARY KEY,
+    student_id int         NOT NULL REFERENCES students (id),
+    phone      varchar(50) NOT NULL
 )
