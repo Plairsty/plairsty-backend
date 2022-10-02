@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package sys;
+option go_package = "health/sys";
+
+message HealthCheckRequest {}
+message HealthCheckResponse {
+  string status = 1;
+  string environment = 2;
+  string version = 3;
+}
+
+service HealthCheck {
+  rpc Check(HealthCheckRequest) returns (HealthCheckResponse) {}
+}
