@@ -2,7 +2,7 @@ package model
 
 import (
 	sys "awesomeProject/internal/proto/health"
-	"context"
+	studentPb "awesomeProject/internal/proto/student"
 	"log"
 )
 
@@ -16,6 +16,7 @@ type Application struct {
 	config Config
 	logger *log.Logger
 	sys.UnimplementedHealthCheckServer
+	studentPb.UnimplementedStudentServiceServer
 }
 
 func NewApplication(config Config, logger *log.Logger) *Application {
@@ -23,15 +24,4 @@ func NewApplication(config Config, logger *log.Logger) *Application {
 		config: config,
 		logger: logger,
 	}
-}
-
-func (app *Application) Check(
-	_ context.Context,
-	_ *sys.HealthCheckRequest,
-) (*sys.HealthCheckResponse, error) {
-	return &sys.HealthCheckResponse{
-		Status:      "available",
-		Environment: app.config.Env,
-		Version:     app.config.Version,
-	}, nil
 }

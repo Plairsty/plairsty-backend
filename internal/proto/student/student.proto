@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package student;
+option go_package = "student/studentPb";
+
+message Student {
+  int32 id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string middle_name = 4;
+  string email = 5;
+  int64 phone = 6;
+}
+
+message CreateStudentRequest {
+  Student student = 1;
+}
+
+message CreateStudentResponse {
+  bool success = 1;
+}
+
+message GetStudentRequest {
+  int32 id = 1;
+}
+
+message GetStudentResponse {
+  Student student = 1;
+}
+
+service StudentService {
+  rpc CreateStudent(CreateStudentRequest) returns (CreateStudentResponse);
+  rpc GetStudent(GetStudentRequest) returns (GetStudentResponse);
+}

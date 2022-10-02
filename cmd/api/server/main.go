@@ -4,6 +4,7 @@ import (
 	"awesomeProject/internal/application"
 	"awesomeProject/internal/interfaces/interceptors"
 	sys "awesomeProject/internal/proto/health"
+	studentPb "awesomeProject/internal/proto/student"
 	"flag"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -46,6 +47,7 @@ func main() {
 	// Check if you have implemented the method in your service implementation
 	// And then check if you have added unimplemented method in your service struct
 	sys.RegisterHealthCheckServer(server, app)
+	studentPb.RegisterStudentServiceServer(server, app)
 
 	// register reflection service on gRPC server.
 	reflection.Register(server)
