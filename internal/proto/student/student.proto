@@ -33,11 +33,17 @@ message Student {
     JUNIOR = 2;
     SENIOR = 3;
   }
+  message AcademicStatus {
+    academicStatus status = 1;
+    int32 semester = 2;
+  }
 
-  optional academicStatus status = 7;
+  optional AcademicStatus status = 7;
 
-  optional string field_of_study = 8; // e.g. Computer Science
-  optional bool is_banned = 9;
+  string field_of_study = 8; // e.g. Computer Science
+  bool is_banned = 9;
+  string reason_for_ban = 10;
+  string image_url = 11;
 }
 
 message UpdateStudentRequest {

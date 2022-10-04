@@ -1,0 +1,1 @@
+ALTER TABLE phone ADD COLUMN phone_type VARCHAR(20) NOT NULL DEFAULT 'mobile';

@@ -44,7 +44,6 @@ func main() {
 
 	flag.Parse()
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
-	app := model.NewApplication(cfg, logger)
 
 	// Open database connection
 	db, err := openDB(cfg)
@@ -57,6 +56,9 @@ func main() {
 			logger.Fatal(err)
 		}
 	}(db)
+	
+	// After all configuration is done, we can create a new application instance.
+	app := model.NewApplication(cfg, logger, db)
 
 	// Register gRPC server
 	lis, err := net.Listen("tcp", cfg.Port)
@@ -104,6 +106,8 @@ func main() {
 }
 
 func openDB(cfg model.Config) (*sql.DB, error) {
+	log.Println("Connecting to database... 🚀")
+	defer log.Println("Connected to database! 🥳")
 	db, err := sql.Open("postgres", cfg.DB.DSN)
 	if err != nil {
 		return nil, err
