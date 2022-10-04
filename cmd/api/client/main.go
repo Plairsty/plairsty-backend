@@ -68,6 +68,7 @@ func GetStudent(
 }
 
 func CreateStudent(ctx context.Context, in studentPb.StudentServiceClient) {
+	rand.Seed(time.Now().UnixNano())
 	r, err := in.CreateStudent(ctx, &studentPb.CreateStudentRequest{
 		Student: &studentPb.Student{
 			Id:         rand.Int31(),
