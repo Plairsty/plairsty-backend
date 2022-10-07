@@ -34,7 +34,7 @@ func main() {
 	if err != nil {
 		return
 	}
-	println(response.Status)
+	log.Println("Server Status: ", response.Status)
 
 	conn2, err := grpc.Dial(
 		"localhost:4000",
@@ -51,20 +51,21 @@ func main() {
 	}(conn2)
 
 	studentClient := studentPb.NewStudentServiceClient(conn2)
-	GetStudent(context.Background(), studentClient)
+	//GetStudent(context.Background(), studentClient)
 	CreateStudent(context.Background(), studentClient)
+	//UpdateStudent(context.Background(), studentClient)
 }
 func GetStudent(
 	ctx context.Context,
 	in studentPb.StudentServiceClient,
 ) {
 	r, err := in.GetStudent(ctx, &studentPb.GetStudentRequest{
-		Id: 10,
+		Id: 1298498081,
 	})
 	if err != nil {
 		log.Fatalln(err)
 	}
-	log.Println(r)
+	log.Println("Response: ", r)
 }
 
 func CreateStudent(ctx context.Context, in studentPb.StudentServiceClient) {
@@ -78,8 +79,14 @@ func CreateStudent(ctx context.Context, in studentPb.StudentServiceClient) {
 			Email:      fmt.Sprintf("some_email%d@gmail.com", rand.Int31()),
 			Phones: []*studentPb.Student_PhoneNumber{
 				{
-					Number: "7977421559",
+					Number: "797742155",
 					Type:   1,
+				}, {
+					Number: "797742155",
+					Type:   0,
+				}, {
+					Number: "097742155",
+					Type:   2,
 				},
 			},
 			Status: &studentPb.Student_AcademicStatus{
@@ -88,6 +95,39 @@ func CreateStudent(ctx context.Context, in studentPb.StudentServiceClient) {
 			},
 			FieldOfStudy: "Computer Science",
 			IsBanned:     false,
+		},
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println(r)
+}
+
+func UpdateStudent(ctx context.Context, in studentPb.StudentServiceClient) {
+	r, err := in.UpdateStudent(ctx, &studentPb.UpdateStudentRequest{
+		Student: &studentPb.Student{
+			Id:         1298498081,
+			FirstName:  "first_name",
+			LastName:   "last_name",
+			MiddleName: "middle_name",
+			Email:      "",
+			Phones: []*studentPb.Student_PhoneNumber{
+				{
+					Number: "797742155",
+					Type:   1,
+				}, {
+					Number: "797742155",
+					Type:   0,
+				}, {
+					Number: "097742155",
+					Type:   2,
+				},
+			},
+			Status:       nil,
+			FieldOfStudy: "",
+			IsBanned:     false,
+			ReasonForBan: "",
+			ImageUrl:     "",
 		},
 	})
 	if err != nil {

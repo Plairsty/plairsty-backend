@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package student;
 option go_package = "student/studentPb";
+// TODO: Remove all uint64 and replace with int64
 
 message Student {
   int32 id = 1;
