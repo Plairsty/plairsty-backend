@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package resume;
+option go_package = "student/resume";
+
+message ResumeFile {
+  bytes data = 2;
+}
+
+enum STATUS {
+  STATUS_UNSPECIFIED = 0;
+  STATUS_PENDING = 1;
+  STATUS_APPROVED = 2;
+  STATUS_REJECTED = 3;
+}
+
+message ResumeUploadRequest {
+  ResumeFile resume = 1;
+}
+
+message ResumeUploadResponse {
+  STATUS status = 1;
+}
+
+service ResumeService {
+  rpc UploadResume(stream ResumeUploadRequest) returns (ResumeUploadResponse);
+}
