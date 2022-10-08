@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package resume;
 option go_package = "student/resumePb";
-
+// TODO: GET RPC
 message Resume {
   bytes data = 2;
 }
