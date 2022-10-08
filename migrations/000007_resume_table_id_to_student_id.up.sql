@@ -1,0 +1,2 @@
+ALTER TABLE resume DROP COLUMN id;
+ALTER TABLE resume ADD PRIMARY KEY (student_id);

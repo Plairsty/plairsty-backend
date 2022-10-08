@@ -4,7 +4,7 @@
 // - protoc             v3.21.1
 // source: internal/proto/resume/resume.proto
 
-package resume
+package resumePb
 
 import (
 	context "context"

@@ -2,6 +2,7 @@ package main
 
 import (
 	sys "awesomeProject/internal/proto/health"
+	resumePb "awesomeProject/internal/proto/resume"
 	studentPb "awesomeProject/internal/proto/student"
 	"context"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"math/rand"
+	"os"
 	"time"
 )
 
@@ -50,10 +52,12 @@ func main() {
 		}
 	}(conn2)
 
-	studentClient := studentPb.NewStudentServiceClient(conn2)
+	//studentClient := studentPb.NewStudentServiceClient(conn2)
 	//GetStudent(context.Background(), studentClient)
-	CreateStudent(context.Background(), studentClient)
+	//CreateStudent(context.Background(), studentClient)
 	//UpdateStudent(context.Background(), studentClient)
+	resumeClient := resumePb.NewResumeServiceClient(conn2)
+	UploadPdf(context.Background(), resumeClient)
 }
 func GetStudent(
 	ctx context.Context,
@@ -134,4 +138,43 @@ func UpdateStudent(ctx context.Context, in studentPb.StudentServiceClient) {
 		log.Fatalln(err)
 	}
 	log.Println(r)
+}
+
+func UploadPdf(ctx context.Context, in resumePb.ResumeServiceClient) {
+	stream, err := in.UploadResume(ctx)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// Read a file and send it to the server
+	file, err := os.Open("Makefile")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(file)
+
+	buf := make([]byte, 2<<20) // 2 MB
+	for {
+		n, err := file.Read(buf)
+		if err != nil {
+			break
+		}
+		if err := stream.Send(&resumePb.ResumeUploadRequest{
+			Resume: &resumePb.Resume{
+				Data: buf[:n],
+			},
+		}); err != nil {
+			log.Fatalln(err)
+		}
+	}
+	res, err := stream.CloseAndRecv()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println(res)
 }

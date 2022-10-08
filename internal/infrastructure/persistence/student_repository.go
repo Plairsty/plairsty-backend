@@ -91,5 +91,9 @@ func (r studentRepository) Update(student *studentPb.Student) error {
 }
 
 func (r studentRepository) Delete(id int64) error {
-	panic("implement me")
+	query := `
+		DELETE FROM students
+		WHERE id = $1`
+	_, err := r.DB.Exec(query, id)
+	return err
 }

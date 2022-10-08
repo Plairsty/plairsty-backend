@@ -3,6 +3,7 @@ package model
 import (
 	"awesomeProject/internal/infrastructure/persistence"
 	sys "awesomeProject/internal/proto/health"
+	resumePb "awesomeProject/internal/proto/resume"
 	studentPb "awesomeProject/internal/proto/student"
 	"database/sql"
 	"log"
@@ -26,12 +27,13 @@ type Application struct {
 	persistence *persistence.Repositories
 	sys.UnimplementedHealthCheckServer
 	studentPb.UnimplementedStudentServiceServer
+	resumePb.UnimplementedResumeServiceServer
 }
 
-func NewApplication(config Config, logger *log.Logger, DB *sql.DB) *Application {
+func NewApplication(config Config, logger *log.Logger, DB *sql.DB, S3 *persistence.S3) *Application {
 	return &Application{
 		config:      config,
 		logger:      logger,
-		persistence: persistence.NewRepositories(DB),
+		persistence: persistence.NewRepositories(DB, S3),
 	}
 }

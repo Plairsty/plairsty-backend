@@ -1,9 +1,9 @@
 syntax = "proto3";
 
 package resume;
-option go_package = "student/resume";
+option go_package = "student/resumePb";
 
-message ResumeFile {
+message Resume {
   bytes data = 2;
 }
 
@@ -15,7 +15,7 @@ enum STATUS {
 }
 
 message ResumeUploadRequest {
-  ResumeFile resume = 1;
+  Resume resume = 1;
 }
 
 message ResumeUploadResponse {

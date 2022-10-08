@@ -2,8 +2,10 @@ package main
 
 import (
 	"awesomeProject/internal/application"
+	"awesomeProject/internal/infrastructure/persistence"
 	"awesomeProject/internal/interfaces/interceptors"
 	sys "awesomeProject/internal/proto/health"
+	resumePb "awesomeProject/internal/proto/resume"
 	studentPb "awesomeProject/internal/proto/student"
 	"awesomeProject/utils"
 	"context"
@@ -56,9 +58,15 @@ func main() {
 			logger.Fatal(err)
 		}
 	}(db)
-	
+	// S3 config
+	S3 := &persistence.S3{
+		Region: "us-east-1",
+		Bucket: "gulshanstestbucketforgrpcbackend",
+		Key:    "folder1/",
+	}
+
 	// After all configuration is done, we can create a new application instance.
-	app := model.NewApplication(cfg, logger, db)
+	app := model.NewApplication(cfg, logger, db, S3)
 
 	// Register gRPC server
 	lis, err := net.Listen("tcp", cfg.Port)
@@ -86,6 +94,7 @@ func main() {
 	// And then check if you have added unimplemented method in your service struct
 	sys.RegisterHealthCheckServer(server, app)
 	studentPb.RegisterStudentServiceServer(server, app)
+	resumePb.RegisterResumeServiceServer(server, app)
 
 	// register reflection service on gRPC server.
 	reflection.Register(server)
