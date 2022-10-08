@@ -17,7 +17,7 @@ func (app *Application) UploadResume(server resumePb.ResumeService_UploadResumeS
 		log.Println("Waiting for data")
 		req, err := server.Recv()
 		if err == io.EOF {
-			log.Println("EOF")
+			app.logger.Println("EOF")
 			break
 		}
 		if err != nil {
@@ -26,7 +26,7 @@ func (app *Application) UploadResume(server resumePb.ResumeService_UploadResumeS
 
 		chunk := req.GetResume().GetData()
 		size := len(chunk)
-		log.Printf("received a chunk with size: %d", size)
+		app.logger.Printf("received a chunk with size: %d", size)
 		dataSize += size
 		if dataSize > maxImageSize {
 			return errors.New("file size limit exceeded")
