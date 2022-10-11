@@ -9,7 +9,7 @@ type jobRepository struct {
 	DB *sql.DB
 }
 
-func (r jobRepository) Insert(hr_id int, job *hrPb.Job) error {
+func (r jobRepository) Insert(hrId int, job *hrPb.Job) error {
 	query := `
 		INSERT INTO jobs (role, department, skills, experience, required_cgpa, description, location, certifications, title, company, hr_id) 
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
@@ -25,7 +25,7 @@ func (r jobRepository) Insert(hr_id int, job *hrPb.Job) error {
 		job.GetCertifications(),
 		job.GetTitle(),
 		job.GetCompany(),
-		hr_id,
+		hrId,
 	}
 	_, err := r.DB.Exec(query, args...)
 	if err != nil {

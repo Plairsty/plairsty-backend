@@ -1,6 +1,7 @@
 package persistence
 
 import (
+	jobApplicationPb "awesomeProject/internal/proto/application"
 	hrPb "awesomeProject/internal/proto/hr"
 	resumePb "awesomeProject/internal/proto/resume"
 	studentPb "awesomeProject/internal/proto/student"
@@ -28,19 +29,25 @@ type Repositories struct {
 	}
 
 	Job interface {
-		Insert(hr_id int, job *hrPb.Job) error
+		Insert(hrId int, job *hrPb.Job) error
 		Get(job *hrPb.JobSearchQuery) ([]*hrPb.Job, error)
 		GetAll() ([]*hrPb.Job, error)
 		Update(job *hrPb.Job) error
 		Delete(id int64) error
 	}
+	JobApplication interface {
+		Insert(userId, jobId int) error
+		Get(applicationId int) (bool, error)
+		GetAll(userId int) ([]*jobApplicationPb.AllJobApplicationStatus, error)
+	}
 }
 
 func NewRepositories(db *sql.DB, s3 *S3) *Repositories {
 	return &Repositories{
-		Student: studentRepository{DB: db},
-		Resume:  ResumeRepository{DB: db, S3: s3},
-		Hr:      hrRepository{DB: db},
-		Job:     jobRepository{DB: db},
+		Student:        studentRepository{DB: db},
+		Resume:         ResumeRepository{DB: db, S3: s3},
+		Hr:             hrRepository{DB: db},
+		Job:            jobRepository{DB: db},
+		JobApplication: JobApplicationRepository{DB: db},
 	}
 }

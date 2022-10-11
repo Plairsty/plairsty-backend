@@ -66,7 +66,7 @@ func (app *Application) CreateHiring(
 
 func (app *Application) DeleteHiring(
 	_ context.Context,
-	in *hrPb.DeleteHiringRequest,
+	_ *hrPb.DeleteHiringRequest,
 ) (*hrPb.DeleteHiringResponse, error) {
 	panic("implement me")
 }

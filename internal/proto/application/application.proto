@@ -24,8 +24,24 @@ message JobApplicationStatusResponse {
   bool status = 1;
 }
 
+message AllJobApplicationRequest {
+  int64 id = 1;
+}
+
+message AllJobApplicationStatus {
+  int64 id = 1;
+  string company_name = 2;
+  string role = 3;
+  bool status = 4;
+  int64 app_id = 5;
+}
+message AllJobApplicationStatusResponse {
+  repeated AllJobApplicationStatus application = 1;
+}
+
 service jobApplicationService {
   rpc AddJobApplication(JobApplicationRequest) returns (JobApplicationResponse) {}
 
   rpc GetJobApplicationStatus(JobApplicationStatusRequest) returns (JobApplicationStatusResponse) {}
+  rpc GetAllJobApplicationStatus(AllJobApplicationRequest) returns (AllJobApplicationStatusResponse) {}
 }

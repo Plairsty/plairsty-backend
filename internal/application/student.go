@@ -9,7 +9,7 @@ import (
 )
 
 func (app *Application) CreateStudent(
-	ctx context.Context,
+	_ context.Context,
 	in *studentPb.CreateStudentRequest,
 ) (*studentPb.CreateStudentResponse, error) {
 	if !utils.EmailValidator(in.Student.Email) {
@@ -26,7 +26,7 @@ func (app *Application) CreateStudent(
 }
 
 func (app *Application) GetStudent(
-	ctx context.Context,
+	_ context.Context,
 	in *studentPb.GetStudentRequest,
 ) (*studentPb.GetStudentResponse, error) {
 	var students []*studentPb.Student
@@ -41,7 +41,7 @@ func (app *Application) GetStudent(
 }
 
 func (app *Application) UpdateStudent(
-	ctx context.Context,
+	_ context.Context,
 	in *studentPb.UpdateStudentRequest,
 ) (*studentPb.UpdateStudentResponse, error) {
 	_, err := app.persistence.Student.Get(int64(in.GetStudent().GetId()))
