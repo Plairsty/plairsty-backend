@@ -2,28 +2,53 @@ package model
 
 import (
 	hrPb "awesomeProject/internal/proto/hr"
+	"awesomeProject/utils"
 	"context"
+	"errors"
 )
 
 func (app *Application) CreateHr(
-	ctx context.Context,
+	_ context.Context,
 	in *hrPb.CreateHrRequest,
 ) (*hrPb.CreateHrResponse, error) {
-	panic("implement me")
+	if !utils.EmailValidator(in.Hr.Email) {
+		return nil, errors.New("invalid email")
+	}
+	id, err := app.persistence.Hr.Insert(in.Hr)
+	if err != nil {
+		return nil, err
+	}
+	return &hrPb.CreateHrResponse{
+		Id:      int64(id),
+		Success: true,
+	}, nil
+
 }
 
 func (app *Application) DeleteHr(
-	ctx context.Context,
+	_ context.Context,
 	in *hrPb.DeleteHrRequest,
 ) (*hrPb.DeleteHrResponse, error) {
-	panic("implement me")
+	err := app.persistence.Hr.Delete(in.GetId())
+	if err != nil {
+		return nil, err
+	}
+	return &hrPb.DeleteHrResponse{
+		Success: true,
+	}, nil
 }
 
 func (app *Application) GetHr(
-	ctx context.Context,
+	_ context.Context,
 	in *hrPb.GetHrRequest,
 ) (*hrPb.GetHrResponse, error) {
-	panic("implement me")
+	dbRes, err := app.persistence.Hr.Get(in.GetId())
+	if err != nil {
+		return nil, err
+	}
+	return &hrPb.GetHrResponse{
+		Hr: dbRes,
+	}, nil
 }
 
 func (app *Application) CreateHiring(

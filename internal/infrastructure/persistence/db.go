@@ -21,8 +21,8 @@ type Repositories struct {
 	}
 
 	Hr interface {
-		Insert(hr *hrPb.Hr) error
-		Get(id int64) (*hrPb.Hr, error)
+		Insert(hr *hrPb.Hr) (int, error)
+		Get(id int64) ([]*hrPb.Hr, error)
 		Update(hr *hrPb.Hr) error
 		Delete(id int64) error
 	}

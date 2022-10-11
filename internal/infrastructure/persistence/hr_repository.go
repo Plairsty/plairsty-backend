@@ -9,31 +9,62 @@ type hrRepository struct {
 	DB *sql.DB
 }
 
-func (r hrRepository) Insert(hr *hrPb.Hr) error {
+func (r hrRepository) Insert(hr *hrPb.Hr) (int, error) {
 	Query := `
 		INSERT INTO hr (name, phone, email, company) 
 		VALUES ($1, $2, $3, $4)
 		RETURNING id
 		`
-	err := r.DB.QueryRow(Query, hr.Name, hr.Phone, hr.Email, hr.Company).Scan(&hr.Email)
+	var id int
+	err := r.DB.QueryRow(Query, hr.Name, hr.Phone, hr.Email, hr.Company).Scan(&id)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	return nil
+	return id, nil
 }
 
-func (r hrRepository) Get(id int64) (*hrPb.Hr, error) {
-	Query := `
+func (r hrRepository) Get(id int64) ([]*hrPb.Hr, error) {
+	if id != 0 {
+		Query := `
 		SELECT id, name, phone, email, company
 		FROM hr
 		WHERE id = $1
 		`
-	var hr hrPb.Hr
-	err := r.DB.QueryRow(Query, id).Scan(&hr.Id, &hr.Name, &hr.Phone, &hr.Email, &hr.Company)
+		var hrs []*hrPb.Hr
+		rows, err := r.DB.Query(Query, id)
+		if err != nil {
+			return nil, err
+		}
+		for rows.Next() {
+			var hr hrPb.Hr
+			err := rows.Scan(&hr.Id, &hr.Name, &hr.Phone, &hr.Email, &hr.Company)
+			if err != nil {
+				return nil, err
+			}
+			hrs = append(hrs, &hr)
+		}
+		return hrs, nil
+	}
+	// If no one is present return all
+	Query := `
+		SELECT id, name, phone, email, company
+		FROM hr
+		`
+	var hrs []*hrPb.Hr
+	rows, err := r.DB.Query(Query)
 	if err != nil {
 		return nil, err
 	}
-	return &hr, nil
+
+	for rows.Next() {
+		var hr hrPb.Hr
+		err := rows.Scan(&hr.Id, &hr.Name, &hr.Phone, &hr.Email, &hr.Company)
+		if err != nil {
+			return nil, err
+		}
+		hrs = append(hrs, &hr)
+	}
+	return hrs, nil
 }
 
 func (r hrRepository) Update(hr *hrPb.Hr) error {

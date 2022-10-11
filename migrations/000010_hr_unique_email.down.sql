@@ -1,0 +1,4 @@
+ALTER TABLE hr
+    DROP CONSTRAINT IF EXISTS email_unique;
+ALTER TABLE hr
+    DROP CONSTRAINT IF EXISTS phone_check;

@@ -29,12 +29,11 @@ message deleteHrResponse {
 }
 
 message getHrRequest {
-  string name = 1;
   int64 id = 2;
 }
 
 message getHrResponse {
-  hr hr = 1;
+  repeated hr hr = 1;
 }
 
 // The hiring request, will contain the detail of hiring round.
