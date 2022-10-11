@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package job_application;
+option go_package = "jobApplication/jobApplicationPb";
+
+message JobApplication {
+  int64 student_id = 1;
+  int64 job_id = 2;
+}
+
+message PostJobApplication{
+  JobApplication application = 1;
+}
+
+message
