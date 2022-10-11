@@ -1,6 +1,7 @@
 package main
 
 import (
+	jobApplicationPb "awesomeProject/internal/proto/application"
 	sys "awesomeProject/internal/proto/health"
 	hrPb "awesomeProject/internal/proto/hr"
 	resumePb "awesomeProject/internal/proto/resume"
@@ -62,12 +63,15 @@ func main() {
 	//UploadPdf(context.Background(), resumeClient)
 	//GetResume(context.Background(), resumeClient)
 
-	hrClient := hrPb.NewHrServiceClient(conn2)
+	//hrClient := hrPb.NewHrServiceClient(conn2)
 	//CreateHr(context.Background(), hrClient)
 	//GetHr(context.Background(), hrClient)
 	//DeleteHr(context.Background(), hrClient)
 	//CreateHiring(context.Background(), hrClient)
-	GetHiring(context.Background(), hrClient)
+	//GetHiring(context.Background(), hrClient)
+
+	jobApplicationClient := jobApplicationPb.NewJobApplicationServiceClient(conn2)
+	CreateJobApplication(context.Background(), jobApplicationClient)
 }
 func GetStudent(
 	ctx context.Context,
@@ -256,6 +260,19 @@ func CreateHiring(ctx context.Context, in hrPb.HrServiceClient) {
 
 func GetHiring(ctx context.Context, in hrPb.HrServiceClient) {
 	r, err := in.GetAllJobs(ctx, &hrPb.GetAllJobsRequest{})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println(r)
+}
+
+func CreateJobApplication(ctx context.Context, in jobApplicationPb.JobApplicationServiceClient) {
+	var r, err = in.AddJobApplication(ctx, &jobApplicationPb.JobApplicationRequest{
+		Application: &jobApplicationPb.JobApplication{
+			StudentId: 134020434,
+			JobId:     2,
+		},
+	})
 	if err != nil {
 		log.Fatalln(err)
 	}

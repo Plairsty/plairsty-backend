@@ -10,8 +10,9 @@ type JobApplicationRepository struct {
 }
 
 func (r JobApplicationRepository) Insert(userId, jobId int) error {
-	query := `INSERT INTO application (user_id, job_id) VALUES ($1, $2)`
-	err := r.DB.QueryRow(query, userId, jobId).Scan()
+	var applicationId int
+	query := `INSERT INTO application (user_id, job_id) VALUES ($1, $2) RETURNING id`
+	err := r.DB.QueryRow(query, userId, jobId).Scan(&applicationId)
 	if err != nil {
 		return err
 	}

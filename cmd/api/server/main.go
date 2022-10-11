@@ -106,13 +106,13 @@ func main() {
 	reflection.Register(server)
 
 	// Get service info
-	for _, service := range server.GetServiceInfo() {
-		go func(s grpc.ServiceInfo) {
-			for _, method := range s.Methods {
-				log.Println("Invoking Method:", method.Name)
-			}
-		}(service)
-	}
+	//for _, service := range server.GetServiceInfo() {
+	//	go func(s grpc.ServiceInfo) {
+	//		for _, method := range s.Methods {
+	//			log.Println("Invoking Method:", method.Name)
+	//		}
+	//	}(service)
+	//}
 
 	// background goroutine for graceful shutdown
 	go func() {
