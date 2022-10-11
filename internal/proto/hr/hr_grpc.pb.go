@@ -26,6 +26,10 @@ type HrServiceClient interface {
 	DeleteHr(ctx context.Context, in *DeleteHrRequest, opts ...grpc.CallOption) (*DeleteHrResponse, error)
 	GetHr(ctx context.Context, in *GetHrRequest, opts ...grpc.CallOption) (*GetHrResponse, error)
 	CreateHiring(ctx context.Context, in *CreateHiringRequest, opts ...grpc.CallOption) (*CreateHiringResponse, error)
+	DeleteHiring(ctx context.Context, in *DeleteHiringRequest, opts ...grpc.CallOption) (*DeleteHiringResponse, error)
+	// Shall be used by students.
+	GetJob(ctx context.Context, in *GetJobRequest, opts ...grpc.CallOption) (*GetJobResponse, error)
+	GetAllJobs(ctx context.Context, in *GetAllJobsRequest, opts ...grpc.CallOption) (*GetAllJobsResponse, error)
 }
 
 type hrServiceClient struct {
@@ -72,6 +76,33 @@ func (c *hrServiceClient) CreateHiring(ctx context.Context, in *CreateHiringRequ
 	return out, nil
 }
 
+func (c *hrServiceClient) DeleteHiring(ctx context.Context, in *DeleteHiringRequest, opts ...grpc.CallOption) (*DeleteHiringResponse, error) {
+	out := new(DeleteHiringResponse)
+	err := c.cc.Invoke(ctx, "/hr.hrService/DeleteHiring", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hrServiceClient) GetJob(ctx context.Context, in *GetJobRequest, opts ...grpc.CallOption) (*GetJobResponse, error) {
+	out := new(GetJobResponse)
+	err := c.cc.Invoke(ctx, "/hr.hrService/GetJob", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hrServiceClient) GetAllJobs(ctx context.Context, in *GetAllJobsRequest, opts ...grpc.CallOption) (*GetAllJobsResponse, error) {
+	out := new(GetAllJobsResponse)
+	err := c.cc.Invoke(ctx, "/hr.hrService/GetAllJobs", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // HrServiceServer is the server API for HrService service.
 // All implementations must embed UnimplementedHrServiceServer
 // for forward compatibility
@@ -80,6 +111,10 @@ type HrServiceServer interface {
 	DeleteHr(context.Context, *DeleteHrRequest) (*DeleteHrResponse, error)
 	GetHr(context.Context, *GetHrRequest) (*GetHrResponse, error)
 	CreateHiring(context.Context, *CreateHiringRequest) (*CreateHiringResponse, error)
+	DeleteHiring(context.Context, *DeleteHiringRequest) (*DeleteHiringResponse, error)
+	// Shall be used by students.
+	GetJob(context.Context, *GetJobRequest) (*GetJobResponse, error)
+	GetAllJobs(context.Context, *GetAllJobsRequest) (*GetAllJobsResponse, error)
 	mustEmbedUnimplementedHrServiceServer()
 }
 
@@ -98,6 +133,15 @@ func (UnimplementedHrServiceServer) GetHr(context.Context, *GetHrRequest) (*GetH
 }
 func (UnimplementedHrServiceServer) CreateHiring(context.Context, *CreateHiringRequest) (*CreateHiringResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateHiring not implemented")
+}
+func (UnimplementedHrServiceServer) DeleteHiring(context.Context, *DeleteHiringRequest) (*DeleteHiringResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteHiring not implemented")
+}
+func (UnimplementedHrServiceServer) GetJob(context.Context, *GetJobRequest) (*GetJobResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetJob not implemented")
+}
+func (UnimplementedHrServiceServer) GetAllJobs(context.Context, *GetAllJobsRequest) (*GetAllJobsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllJobs not implemented")
 }
 func (UnimplementedHrServiceServer) mustEmbedUnimplementedHrServiceServer() {}
 
@@ -184,6 +228,60 @@ func _HrService_CreateHiring_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HrService_DeleteHiring_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteHiringRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HrServiceServer).DeleteHiring(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hr.hrService/DeleteHiring",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HrServiceServer).DeleteHiring(ctx, req.(*DeleteHiringRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HrService_GetJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetJobRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HrServiceServer).GetJob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hr.hrService/GetJob",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HrServiceServer).GetJob(ctx, req.(*GetJobRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HrService_GetAllJobs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllJobsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HrServiceServer).GetAllJobs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hr.hrService/GetAllJobs",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HrServiceServer).GetAllJobs(ctx, req.(*GetAllJobsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // HrService_ServiceDesc is the grpc.ServiceDesc for HrService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +304,18 @@ var HrService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateHiring",
 			Handler:    _HrService_CreateHiring_Handler,
+		},
+		{
+			MethodName: "DeleteHiring",
+			Handler:    _HrService_DeleteHiring_Handler,
+		},
+		{
+			MethodName: "GetJob",
+			Handler:    _HrService_GetJob_Handler,
+		},
+		{
+			MethodName: "GetAllJobs",
+			Handler:    _HrService_GetAllJobs_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

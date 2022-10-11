@@ -29,7 +29,7 @@ type Repositories struct {
 
 	Job interface {
 		Insert(job *hrPb.Job) error
-		Get(id int64) (*hrPb.Job, error)
+		Get(job *hrPb.JobSearchQuery) (*hrPb.Job, error)
 		Update(job *hrPb.Job) error
 		Delete(id int64) error
 	}

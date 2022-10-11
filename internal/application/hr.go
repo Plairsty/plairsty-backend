@@ -32,3 +32,24 @@ func (app *Application) CreateHiring(
 ) (*hrPb.CreateHiringResponse, error) {
 	panic("implement me")
 }
+
+func (app *Application) DeleteHiring(
+	ctx context.Context,
+	in *hrPb.DeleteHiringRequest,
+) (*hrPb.DeleteHiringResponse, error) {
+	panic("implement me")
+}
+
+func (app *Application) GetJob(
+	ctx context.Context,
+	in *hrPb.GetJobRequest,
+) (*hrPb.GetJobResponse, error) {
+	panic("implement me")
+}
+
+func (app *Application) GetAllJobs(
+	ctx context.Context,
+	in *hrPb.GetAllJobsRequest,
+) (*hrPb.GetAllJobsResponse, error) {
+	panic("implement me")
+}

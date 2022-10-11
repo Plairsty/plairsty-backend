@@ -47,6 +47,7 @@ message getHrResponse {
 // Required certifications for the role.
 // Required location for the role.
 message job {
+  int64 id = 1;
   string role = 2;
   string department = 3;
   string skills = 4;
@@ -68,9 +69,47 @@ message createHiringResponse {
   bool success = 1;
 }
 
+message deleteHiringRequest {
+  int64 id = 1;
+}
+
+message deleteHiringResponse {
+  bool success = 1;
+}
+
+message getJobRequest {
+  int64 id = 1;
+  string title = 2;
+}
+
+message getJobResponse {
+  job job = 1;
+}
+
+message jobSearchQuery {
+  string title = 1;
+  string company = 2;
+  string location = 3;
+  string skills = 4;
+}
+// If none is provided, then all the jobs will be returned.
+message getAllJobsRequest {
+  jobSearchQuery query = 1;
+}
+message getAllJobsResponse {
+  repeated job jobs = 1;
+}
+
+
 service hrService {
   rpc CreateHr(createHrRequest) returns (createHrResponse);
   rpc DeleteHr(deleteHrRequest) returns (deleteHrResponse);
   rpc GetHr (getHrRequest) returns (getHrResponse) {}
   rpc CreateHiring (createHiringRequest) returns (createHiringResponse) {}
+  rpc DeleteHiring (deleteHiringRequest) returns (deleteHiringResponse) {}
+
+  // Shall be used by students.
+  rpc GetJob (getJobRequest) returns (getJobResponse) {}
+  rpc GetAllJobs (getAllJobsRequest) returns (getAllJobsResponse) {}
+
 }

@@ -13,7 +13,7 @@ func (r jobRepository) Insert(job *hrPb.Job) error {
 	panic("implement me")
 }
 
-func (r jobRepository) Get(id int64) (*hrPb.Job, error) {
+func (r jobRepository) Get(query *hrPb.JobSearchQuery) (*hrPb.Job, error) {
 	panic("implement me")
 }
 
