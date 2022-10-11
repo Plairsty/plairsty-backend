@@ -8,8 +8,24 @@ message JobApplication {
   int64 job_id = 2;
 }
 
-message PostJobApplication{
+message JobApplicationRequest{
   JobApplication application = 1;
 }
 
-message
+message JobApplicationResponse {
+  bool success = 1;
+}
+
+message JobApplicationStatusRequest {
+  int64 id = 1;
+}
+
+message JobApplicationStatusResponse {
+  bool status = 1;
+}
+
+service jobApplicationService {
+  rpc AddJobApplication(JobApplicationRequest) returns (JobApplicationResponse) {}
+
+  rpc GetJobApplicationStatus(JobApplicationStatusRequest) returns (JobApplicationStatusResponse) {}
+}
