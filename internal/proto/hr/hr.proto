@@ -57,6 +57,7 @@ message job {
   string certifications = 9;
   string title = 10;
   string company = 11;
+  int64 hr_id = 12;
 }
 
 message createHiringRequest {
@@ -79,22 +80,22 @@ message deleteHiringResponse {
 message getJobRequest {
   int64 id = 1;
   string title = 2;
+  string company = 3;
+  string location = 4;
 }
 
 message getJobResponse {
-  job job = 1;
+  repeated job job = 1;
 }
 
 message jobSearchQuery {
   string title = 1;
   string company = 2;
   string location = 3;
-  string skills = 4;
+  int64 id = 5;
 }
 // If none is provided, then all the jobs will be returned.
-message getAllJobsRequest {
-  jobSearchQuery query = 1;
-}
+message getAllJobsRequest {}
 message getAllJobsResponse {
   repeated job jobs = 1;
 }

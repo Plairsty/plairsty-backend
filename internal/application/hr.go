@@ -52,29 +52,52 @@ func (app *Application) GetHr(
 }
 
 func (app *Application) CreateHiring(
-	ctx context.Context,
+	_ context.Context,
 	in *hrPb.CreateHiringRequest,
 ) (*hrPb.CreateHiringResponse, error) {
-	panic("implement me")
+	err := app.persistence.Job.Insert(int(in.GetHrId()), in.GetJob())
+	if err != nil {
+		return nil, err
+	}
+	return &hrPb.CreateHiringResponse{
+		Success: true,
+	}, nil
 }
 
 func (app *Application) DeleteHiring(
-	ctx context.Context,
+	_ context.Context,
 	in *hrPb.DeleteHiringRequest,
 ) (*hrPb.DeleteHiringResponse, error) {
 	panic("implement me")
 }
 
 func (app *Application) GetJob(
-	ctx context.Context,
+	_ context.Context,
 	in *hrPb.GetJobRequest,
 ) (*hrPb.GetJobResponse, error) {
-	panic("implement me")
+	res, err := app.persistence.Job.Get(&hrPb.JobSearchQuery{
+		Title:    in.GetTitle(),
+		Company:  in.GetCompany(),
+		Location: in.GetLocation(),
+		Id:       in.GetId(),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &hrPb.GetJobResponse{
+		Job: res,
+	}, nil
 }
 
 func (app *Application) GetAllJobs(
-	ctx context.Context,
-	in *hrPb.GetAllJobsRequest,
+	_ context.Context,
+	_ *hrPb.GetAllJobsRequest,
 ) (*hrPb.GetAllJobsResponse, error) {
-	panic("implement me")
+	res, err := app.persistence.Job.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	return &hrPb.GetAllJobsResponse{
+		Jobs: res,
+	}, nil
 }

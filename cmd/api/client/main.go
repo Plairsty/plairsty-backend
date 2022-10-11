@@ -65,7 +65,9 @@ func main() {
 	hrClient := hrPb.NewHrServiceClient(conn2)
 	//CreateHr(context.Background(), hrClient)
 	//GetHr(context.Background(), hrClient)
-	DeleteHr(context.Background(), hrClient)
+	//DeleteHr(context.Background(), hrClient)
+	//CreateHiring(context.Background(), hrClient)
+	GetHiring(context.Background(), hrClient)
 }
 func GetStudent(
 	ctx context.Context,
@@ -224,6 +226,36 @@ func DeleteHr(ctx context.Context, in hrPb.HrServiceClient) {
 	r, err := in.DeleteHr(ctx, &hrPb.DeleteHrRequest{
 		Id: 1,
 	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println(r)
+}
+
+func CreateHiring(ctx context.Context, in hrPb.HrServiceClient) {
+	r, err := in.CreateHiring(ctx, &hrPb.CreateHiringRequest{
+		HrId: 4,
+		Job: &hrPb.Job{
+			Role:           "Frontend Developer",
+			Department:     "Information Technology",
+			Skills:         "React, Redux, TypeScript, JavaScript, HTML, CSS",
+			Experience:     "1 year",
+			RequiredCgpa:   "4.0",
+			Description:    "We are looking for a Frontend developer",
+			Location:       "Pune",
+			Certifications: "ANY",
+			Title:          "Internship",
+			Company:        "NONAME",
+		},
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println(r)
+}
+
+func GetHiring(ctx context.Context, in hrPb.HrServiceClient) {
+	r, err := in.GetAllJobs(ctx, &hrPb.GetAllJobsRequest{})
 	if err != nil {
 		log.Fatalln(err)
 	}
