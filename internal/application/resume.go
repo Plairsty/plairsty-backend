@@ -3,12 +3,13 @@ package model
 import (
 	resumePb "awesomeProject/internal/proto/resume"
 	"bytes"
+	"context"
 	"errors"
 	"io"
 	"log"
 )
 
-const maxImageSize = 2 << 20
+const maxResumeSize = 2 << 20
 
 func (app *Application) UploadResume(server resumePb.ResumeService_UploadResumeServer) error {
 	data := bytes.Buffer{}
@@ -28,7 +29,7 @@ func (app *Application) UploadResume(server resumePb.ResumeService_UploadResumeS
 		size := len(chunk)
 		app.logger.Printf("received a chunk with size: %d", size)
 		dataSize += size
-		if dataSize > maxImageSize {
+		if dataSize > maxResumeSize {
 			return errors.New("file size limit exceeded")
 		}
 		_, err = data.Write(chunk)
@@ -47,4 +48,26 @@ func (app *Application) UploadResume(server resumePb.ResumeService_UploadResumeS
 	return server.SendAndClose(&resumePb.ResumeUploadResponse{
 		Status: resumePb.STATUS_STATUS_APPROVED,
 	})
+}
+
+func (app *Application) GetResume(_ context.Context, req *resumePb.GetResumeRequest) (*resumePb.GetResumeResponse, error) {
+	resume, err := app.persistence.Resume.Get(req.GetId())
+	if err != nil {
+		return nil, err
+	}
+	return &resumePb.GetResumeResponse{
+		Url: resume,
+	}, nil
+}
+
+func (app *Application) DeleteResume(_ context.Context, req *resumePb.DeleteResumeRequest) (*resumePb.DeleteResumeResponse, error) {
+	err := app.persistence.Resume.Delete(req.GetId())
+	if err != nil {
+		return &resumePb.DeleteResumeResponse{
+			Status: resumePb.STATUS_STATUS_REJECTED,
+		}, err
+	}
+	return &resumePb.DeleteResumeResponse{
+		Status: resumePb.STATUS_STATUS_APPROVED,
+	}, nil
 }

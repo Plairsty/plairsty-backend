@@ -22,6 +22,24 @@ message ResumeUploadResponse {
   STATUS status = 1;
 }
 
+message getResumeRequest {
+  int64 id = 1;
+}
+
+message getResumeResponse {
+  string url = 1;
+}
+
+message deleteResumeRequest {
+  int64 id = 1;
+}
+
+message deleteResumeResponse {
+  STATUS status = 1;
+}
+
 service ResumeService {
   rpc UploadResume(stream ResumeUploadRequest) returns (ResumeUploadResponse);
+  rpc GetResume(getResumeRequest) returns (getResumeResponse);
+  rpc DeleteResume(deleteResumeRequest) returns (deleteResumeResponse);
 }

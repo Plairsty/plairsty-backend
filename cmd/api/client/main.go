@@ -57,7 +57,8 @@ func main() {
 	//CreateStudent(context.Background(), studentClient)
 	//UpdateStudent(context.Background(), studentClient)
 	resumeClient := resumePb.NewResumeServiceClient(conn2)
-	UploadPdf(context.Background(), resumeClient)
+	//UploadPdf(context.Background(), resumeClient)
+	GetResume(context.Background(), resumeClient)
 }
 func GetStudent(
 	ctx context.Context,
@@ -177,4 +178,14 @@ func UploadPdf(ctx context.Context, in resumePb.ResumeServiceClient) {
 		log.Fatalln(err)
 	}
 	log.Println(res)
+}
+
+func GetResume(ctx context.Context, in resumePb.ResumeServiceClient) {
+	r, err := in.GetResume(ctx, &resumePb.GetResumeRequest{
+		Id: 355284088,
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println(r)
 }

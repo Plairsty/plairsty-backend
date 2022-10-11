@@ -23,6 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ResumeServiceClient interface {
 	UploadResume(ctx context.Context, opts ...grpc.CallOption) (ResumeService_UploadResumeClient, error)
+	GetResume(ctx context.Context, in *GetResumeRequest, opts ...grpc.CallOption) (*GetResumeResponse, error)
+	DeleteResume(ctx context.Context, in *DeleteResumeRequest, opts ...grpc.CallOption) (*DeleteResumeResponse, error)
 }
 
 type resumeServiceClient struct {
@@ -67,11 +69,31 @@ func (x *resumeServiceUploadResumeClient) CloseAndRecv() (*ResumeUploadResponse,
 	return m, nil
 }
 
+func (c *resumeServiceClient) GetResume(ctx context.Context, in *GetResumeRequest, opts ...grpc.CallOption) (*GetResumeResponse, error) {
+	out := new(GetResumeResponse)
+	err := c.cc.Invoke(ctx, "/resume.ResumeService/GetResume", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *resumeServiceClient) DeleteResume(ctx context.Context, in *DeleteResumeRequest, opts ...grpc.CallOption) (*DeleteResumeResponse, error) {
+	out := new(DeleteResumeResponse)
+	err := c.cc.Invoke(ctx, "/resume.ResumeService/DeleteResume", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ResumeServiceServer is the server API for ResumeService service.
 // All implementations must embed UnimplementedResumeServiceServer
 // for forward compatibility
 type ResumeServiceServer interface {
 	UploadResume(ResumeService_UploadResumeServer) error
+	GetResume(context.Context, *GetResumeRequest) (*GetResumeResponse, error)
+	DeleteResume(context.Context, *DeleteResumeRequest) (*DeleteResumeResponse, error)
 	mustEmbedUnimplementedResumeServiceServer()
 }
 
@@ -81,6 +103,12 @@ type UnimplementedResumeServiceServer struct {
 
 func (UnimplementedResumeServiceServer) UploadResume(ResumeService_UploadResumeServer) error {
 	return status.Errorf(codes.Unimplemented, "method UploadResume not implemented")
+}
+func (UnimplementedResumeServiceServer) GetResume(context.Context, *GetResumeRequest) (*GetResumeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetResume not implemented")
+}
+func (UnimplementedResumeServiceServer) DeleteResume(context.Context, *DeleteResumeRequest) (*DeleteResumeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteResume not implemented")
 }
 func (UnimplementedResumeServiceServer) mustEmbedUnimplementedResumeServiceServer() {}
 
@@ -121,13 +149,58 @@ func (x *resumeServiceUploadResumeServer) Recv() (*ResumeUploadRequest, error) {
 	return m, nil
 }
 
+func _ResumeService_GetResume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetResumeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ResumeServiceServer).GetResume(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/resume.ResumeService/GetResume",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ResumeServiceServer).GetResume(ctx, req.(*GetResumeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ResumeService_DeleteResume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteResumeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ResumeServiceServer).DeleteResume(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/resume.ResumeService/DeleteResume",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ResumeServiceServer).DeleteResume(ctx, req.(*DeleteResumeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ResumeService_ServiceDesc is the grpc.ServiceDesc for ResumeService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ResumeService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "resume.ResumeService",
 	HandlerType: (*ResumeServiceServer)(nil),
-	Methods:     []grpc.MethodDesc{},
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetResume",
+			Handler:    _ResumeService_GetResume_Handler,
+		},
+		{
+			MethodName: "DeleteResume",
+			Handler:    _ResumeService_DeleteResume_Handler,
+		},
+	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "UploadResume",
