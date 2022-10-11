@@ -3,6 +3,7 @@ package model
 import (
 	"awesomeProject/internal/infrastructure/persistence"
 	sys "awesomeProject/internal/proto/health"
+	hrPb "awesomeProject/internal/proto/hr"
 	resumePb "awesomeProject/internal/proto/resume"
 	studentPb "awesomeProject/internal/proto/student"
 	"database/sql"
@@ -28,6 +29,7 @@ type Application struct {
 	sys.UnimplementedHealthCheckServer
 	studentPb.UnimplementedStudentServiceServer
 	resumePb.UnimplementedResumeServiceServer
+	hrPb.UnimplementedHrServiceServer
 }
 
 func NewApplication(config Config, logger *log.Logger, DB *sql.DB, S3 *persistence.S3) *Application {

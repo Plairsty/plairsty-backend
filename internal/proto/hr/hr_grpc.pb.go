@@ -22,6 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type HrServiceClient interface {
+	CreateHr(ctx context.Context, in *CreateHrRequest, opts ...grpc.CallOption) (*CreateHrResponse, error)
+	DeleteHr(ctx context.Context, in *DeleteHrRequest, opts ...grpc.CallOption) (*DeleteHrResponse, error)
 	GetHr(ctx context.Context, in *GetHrRequest, opts ...grpc.CallOption) (*GetHrResponse, error)
 	CreateHiring(ctx context.Context, in *CreateHiringRequest, opts ...grpc.CallOption) (*CreateHiringResponse, error)
 }
@@ -32,6 +34,24 @@ type hrServiceClient struct {
 
 func NewHrServiceClient(cc grpc.ClientConnInterface) HrServiceClient {
 	return &hrServiceClient{cc}
+}
+
+func (c *hrServiceClient) CreateHr(ctx context.Context, in *CreateHrRequest, opts ...grpc.CallOption) (*CreateHrResponse, error) {
+	out := new(CreateHrResponse)
+	err := c.cc.Invoke(ctx, "/hr.hrService/createHr", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hrServiceClient) DeleteHr(ctx context.Context, in *DeleteHrRequest, opts ...grpc.CallOption) (*DeleteHrResponse, error) {
+	out := new(DeleteHrResponse)
+	err := c.cc.Invoke(ctx, "/hr.hrService/deleteHr", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *hrServiceClient) GetHr(ctx context.Context, in *GetHrRequest, opts ...grpc.CallOption) (*GetHrResponse, error) {
@@ -56,6 +76,8 @@ func (c *hrServiceClient) CreateHiring(ctx context.Context, in *CreateHiringRequ
 // All implementations must embed UnimplementedHrServiceServer
 // for forward compatibility
 type HrServiceServer interface {
+	CreateHr(context.Context, *CreateHrRequest) (*CreateHrResponse, error)
+	DeleteHr(context.Context, *DeleteHrRequest) (*DeleteHrResponse, error)
 	GetHr(context.Context, *GetHrRequest) (*GetHrResponse, error)
 	CreateHiring(context.Context, *CreateHiringRequest) (*CreateHiringResponse, error)
 	mustEmbedUnimplementedHrServiceServer()
@@ -65,6 +87,12 @@ type HrServiceServer interface {
 type UnimplementedHrServiceServer struct {
 }
 
+func (UnimplementedHrServiceServer) CreateHr(context.Context, *CreateHrRequest) (*CreateHrResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateHr not implemented")
+}
+func (UnimplementedHrServiceServer) DeleteHr(context.Context, *DeleteHrRequest) (*DeleteHrResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteHr not implemented")
+}
 func (UnimplementedHrServiceServer) GetHr(context.Context, *GetHrRequest) (*GetHrResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHr not implemented")
 }
@@ -82,6 +110,42 @@ type UnsafeHrServiceServer interface {
 
 func RegisterHrServiceServer(s grpc.ServiceRegistrar, srv HrServiceServer) {
 	s.RegisterService(&HrService_ServiceDesc, srv)
+}
+
+func _HrService_CreateHr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateHrRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HrServiceServer).CreateHr(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hr.hrService/createHr",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HrServiceServer).CreateHr(ctx, req.(*CreateHrRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HrService_DeleteHr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteHrRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HrServiceServer).DeleteHr(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hr.hrService/deleteHr",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HrServiceServer).DeleteHr(ctx, req.(*DeleteHrRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _HrService_GetHr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -127,6 +191,14 @@ var HrService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hr.hrService",
 	HandlerType: (*HrServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "createHr",
+			Handler:    _HrService_CreateHr_Handler,
+		},
+		{
+			MethodName: "deleteHr",
+			Handler:    _HrService_DeleteHr_Handler,
+		},
 		{
 			MethodName: "getHr",
 			Handler:    _HrService_GetHr_Handler,

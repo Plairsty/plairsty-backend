@@ -8,11 +8,28 @@ message hr {
   string phone = 2;
   string email = 3;
   string company = 4;
-  int64 id = 5;
+}
+
+message createHrRequest {
+  hr hr = 1;
+}
+
+message createHrResponse {
+  int64 id = 1;
+  bool success = 2;
+}
+
+message deleteHrRequest {
+  int64 id = 1;
+}
+
+message deleteHrResponse {
+  bool success = 1;
 }
 
 message getHrRequest {
   string name = 1;
+  int64 id = 2;
 }
 
 message getHrResponse {
@@ -28,8 +45,7 @@ message getHrResponse {
 // Required education for the role. cgpa, degree, college, year of passing.
 // Required certifications for the role.
 // Required location for the role.
-message createHiringRequest {
-  int64 hr_id = 1; // id of hiring manager.
+message job {
   string role = 2;
   string department = 3;
   string skills = 4;
@@ -42,11 +58,18 @@ message createHiringRequest {
   string company = 11;
 }
 
+message createHiringRequest {
+  int64 hr_id = 1; // id of hiring manager.
+  job job = 2;
+}
+
 message createHiringResponse {
   bool success = 1;
 }
 
 service hrService {
+  rpc createHr(createHrRequest) returns (createHrResponse);
+  rpc deleteHr(deleteHrRequest) returns (deleteHrResponse);
   rpc getHr (getHrRequest) returns (getHrResponse) {}
   rpc createHiring (createHiringRequest) returns (createHiringResponse) {}
 }
