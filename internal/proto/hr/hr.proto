@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package hr;
+option go_package = "hr/hrPb";
+
+message hr {
+  string name = 1;
+  string phone = 2;
+  string email = 3;
+  string company = 4;
+  int64 id = 5;
+}
+
+message getHrRequest {
+  string name = 1;
+}
+
+message getHrResponse {
+  hr hr = 1;
+}
+
+// The hiring request, will contain the detail of hiring round.
+// Role for which hiring is being done.
+// Department for which hiring is being done.
+// Hiring manager for the hiring.
+// Required skills for the role.
+// Required experience for the role.
+// Required education for the role. cgpa, degree, college, year of passing.
+// Required certifications for the role.
+// Required location for the role.
+message createHiringRequest {
+  int64 hr_id = 1; // id of hiring manager.
+  string role = 2;
+  string department = 3;
+  string skills = 4;
+  string experience = 5;
+  string required_cgpa = 6;
+  string description = 7;
+  string location = 8;
+  string certifications = 9;
+}
+
+message createHiringResponse {
+  bool success = 1;
+}
+
+service hrService {
+  rpc getHr (getHrRequest) returns (getHrResponse) {}
+  rpc createHiring (createHiringRequest) returns (createHiringResponse) {}
+}
