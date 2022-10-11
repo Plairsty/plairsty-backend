@@ -38,7 +38,7 @@ func NewHrServiceClient(cc grpc.ClientConnInterface) HrServiceClient {
 
 func (c *hrServiceClient) CreateHr(ctx context.Context, in *CreateHrRequest, opts ...grpc.CallOption) (*CreateHrResponse, error) {
 	out := new(CreateHrResponse)
-	err := c.cc.Invoke(ctx, "/hr.hrService/createHr", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/hr.hrService/CreateHr", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (c *hrServiceClient) CreateHr(ctx context.Context, in *CreateHrRequest, opt
 
 func (c *hrServiceClient) DeleteHr(ctx context.Context, in *DeleteHrRequest, opts ...grpc.CallOption) (*DeleteHrResponse, error) {
 	out := new(DeleteHrResponse)
-	err := c.cc.Invoke(ctx, "/hr.hrService/deleteHr", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/hr.hrService/DeleteHr", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (c *hrServiceClient) DeleteHr(ctx context.Context, in *DeleteHrRequest, opt
 
 func (c *hrServiceClient) GetHr(ctx context.Context, in *GetHrRequest, opts ...grpc.CallOption) (*GetHrResponse, error) {
 	out := new(GetHrResponse)
-	err := c.cc.Invoke(ctx, "/hr.hrService/getHr", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/hr.hrService/GetHr", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (c *hrServiceClient) GetHr(ctx context.Context, in *GetHrRequest, opts ...g
 
 func (c *hrServiceClient) CreateHiring(ctx context.Context, in *CreateHiringRequest, opts ...grpc.CallOption) (*CreateHiringResponse, error) {
 	out := new(CreateHiringResponse)
-	err := c.cc.Invoke(ctx, "/hr.hrService/createHiring", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/hr.hrService/CreateHiring", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func _HrService_CreateHr_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hr.hrService/createHr",
+		FullMethod: "/hr.hrService/CreateHr",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(HrServiceServer).CreateHr(ctx, req.(*CreateHrRequest))
@@ -140,7 +140,7 @@ func _HrService_DeleteHr_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hr.hrService/deleteHr",
+		FullMethod: "/hr.hrService/DeleteHr",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(HrServiceServer).DeleteHr(ctx, req.(*DeleteHrRequest))
@@ -158,7 +158,7 @@ func _HrService_GetHr_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hr.hrService/getHr",
+		FullMethod: "/hr.hrService/GetHr",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(HrServiceServer).GetHr(ctx, req.(*GetHrRequest))
@@ -176,7 +176,7 @@ func _HrService_CreateHiring_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hr.hrService/createHiring",
+		FullMethod: "/hr.hrService/CreateHiring",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(HrServiceServer).CreateHiring(ctx, req.(*CreateHiringRequest))
@@ -192,19 +192,19 @@ var HrService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*HrServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "createHr",
+			MethodName: "CreateHr",
 			Handler:    _HrService_CreateHr_Handler,
 		},
 		{
-			MethodName: "deleteHr",
+			MethodName: "DeleteHr",
 			Handler:    _HrService_DeleteHr_Handler,
 		},
 		{
-			MethodName: "getHr",
+			MethodName: "GetHr",
 			Handler:    _HrService_GetHr_Handler,
 		},
 		{
-			MethodName: "createHiring",
+			MethodName: "CreateHiring",
 			Handler:    _HrService_CreateHiring_Handler,
 		},
 	},

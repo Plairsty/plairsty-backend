@@ -68,8 +68,8 @@ message createHiringResponse {
 }
 
 service hrService {
-  rpc createHr(createHrRequest) returns (createHrResponse);
-  rpc deleteHr(deleteHrRequest) returns (deleteHrResponse);
-  rpc getHr (getHrRequest) returns (getHrResponse) {}
-  rpc createHiring (createHiringRequest) returns (createHiringResponse) {}
+  rpc CreateHr(createHrRequest) returns (createHrResponse);
+  rpc DeleteHr(deleteHrRequest) returns (deleteHrResponse);
+  rpc GetHr (getHrRequest) returns (getHrResponse) {}
+  rpc CreateHiring (createHiringRequest) returns (createHiringResponse) {}
 }
