@@ -38,6 +38,8 @@ message createHiringRequest {
   string description = 7;
   string location = 8;
   string certifications = 9;
+  string title = 10;
+  string company = 11;
 }
 
 message createHiringResponse {
