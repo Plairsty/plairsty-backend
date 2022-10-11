@@ -45,7 +45,7 @@ message getHrResponse {
 // Required education for the role. cgpa, degree, college, year of passing.
 // Required certifications for the role.
 // Required location for the role.
-message job {
+message job_fields {
   int64 id = 1;
   string role = 2;
   string department = 3;
@@ -62,7 +62,7 @@ message job {
 
 message createHiringRequest {
   int64 hr_id = 1; // id of hiring manager.
-  job job = 2;
+  job_fields job = 2;
 }
 
 message createHiringResponse {
@@ -85,7 +85,7 @@ message getJobRequest {
 }
 
 message getJobResponse {
-  repeated job job = 1;
+  repeated job_fields job = 1;
 }
 
 message jobSearchQuery {
@@ -97,7 +97,7 @@ message jobSearchQuery {
 // If none is provided, then all the jobs will be returned.
 message getAllJobsRequest {}
 message getAllJobsResponse {
-  repeated job jobs = 1;
+  repeated job_fields jobs = 1;
 }
 
 

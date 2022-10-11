@@ -9,7 +9,7 @@ type jobRepository struct {
 	DB *sql.DB
 }
 
-func (r jobRepository) Insert(hrId int, job *hrPb.Job) error {
+func (r jobRepository) Insert(hrId int, job *hrPb.JobFields) error {
 	query := `
 		INSERT INTO jobs (role, department, skills, experience, required_cgpa, description, location, certifications, title, company, hr_id) 
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
@@ -34,9 +34,9 @@ func (r jobRepository) Insert(hrId int, job *hrPb.Job) error {
 	return nil
 }
 
-func (r jobRepository) Get(query *hrPb.JobSearchQuery) ([]*hrPb.Job, error) {
+func (r jobRepository) Get(query *hrPb.JobSearchQuery) ([]*hrPb.JobFields, error) {
 	Query := ``
-	var jobs []*hrPb.Job
+	var jobs []*hrPb.JobFields
 	var rows *sql.Rows
 	var err error
 	if query.GetId() != 0 {
@@ -85,7 +85,7 @@ func (r jobRepository) Get(query *hrPb.JobSearchQuery) ([]*hrPb.Job, error) {
 		}
 	}
 	for rows.Next() {
-		var job hrPb.Job
+		var job hrPb.JobFields
 		err := rows.Scan(
 			&job.Id,
 			&job.Certifications,
@@ -108,18 +108,18 @@ func (r jobRepository) Get(query *hrPb.JobSearchQuery) ([]*hrPb.Job, error) {
 	return jobs, nil
 }
 
-func (r jobRepository) GetAll() ([]*hrPb.Job, error) {
+func (r jobRepository) GetAll() ([]*hrPb.JobFields, error) {
 	Query := `
 		SELECT id, certifications, company, description, department, experience, location, required_cgpa, role, skills, title, hr_id
 		FROM jobs
 		`
-	var jobs []*hrPb.Job
+	var jobs []*hrPb.JobFields
 	rows, err := r.DB.Query(Query)
 	if err != nil {
 		return nil, err
 	}
 	for rows.Next() {
-		var job hrPb.Job
+		var job hrPb.JobFields
 		err := rows.Scan(
 			&job.Id,
 			&job.Certifications,
@@ -142,7 +142,7 @@ func (r jobRepository) GetAll() ([]*hrPb.Job, error) {
 	return jobs, nil
 }
 
-func (r jobRepository) Update(job *hrPb.Job) error {
+func (r jobRepository) Update(job *hrPb.JobFields) error {
 	panic("implement me")
 }
 
