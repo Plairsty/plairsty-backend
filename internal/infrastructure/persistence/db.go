@@ -29,10 +29,10 @@ type Repositories struct {
 	}
 
 	Job interface {
-		Insert(hrId int, job *hrPb.Job) error
-		Get(job *hrPb.JobSearchQuery) ([]*hrPb.Job, error)
-		GetAll() ([]*hrPb.Job, error)
-		Update(job *hrPb.Job) error
+		Insert(hrId int, job *hrPb.JobFields) error
+		Get(job *hrPb.JobSearchQuery) ([]*hrPb.JobFields, error)
+		GetAll() ([]*hrPb.JobFields, error)
+		Update(job *hrPb.JobFields) error
 		Delete(id int64) error
 	}
 	JobApplication interface {
