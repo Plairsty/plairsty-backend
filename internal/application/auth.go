@@ -7,6 +7,9 @@ import (
 	"database/sql"
 	"errors"
 	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 )
 
 func (app *Application) Register(
@@ -57,4 +60,33 @@ func (app *Application) Logout(
 	_ *authPb.LogoutRequest,
 ) (*authPb.LogoutResponse, error) {
 	panic("implement me")
+}
+
+func (app *Application) Authorize(
+	ctx context.Context,
+	method string,
+) error {
+	accessibleRole, ok := app.accessibleRoles[method]
+	if !ok {
+		return status.Error(codes.NotFound, "method not found")
+	}
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return status.Error(codes.Unauthenticated, "metadata not found")
+	}
+	values := md["authorization"]
+	if len(values) == 0 {
+		return status.Error(codes.Unauthenticated, "authorization token not found")
+	}
+	accessToken := values[0]
+	claims, err := app.jwtManager.ValidateToken(accessToken)
+	if err != nil {
+		return status.Error(codes.Unauthenticated, "invalid token")
+	}
+	for _, role := range accessibleRole {
+		if role == claims.Role {
+			return nil
+		}
+	}
+	return status.Error(codes.PermissionDenied, "permission denied")
 }

@@ -26,10 +26,11 @@ type Config struct {
 }
 
 type Application struct {
-	config      Config
-	logger      *log.Logger
-	persistence *persistence.Repositories
-	jwtManager  *service.JwtManager
+	config          Config
+	logger          *log.Logger
+	persistence     *persistence.Repositories
+	jwtManager      *service.JwtManager
+	accessibleRoles map[string][]string
 	sys.UnimplementedHealthCheckServer
 	authPb.UnimplementedAuthServiceServer
 	studentPb.UnimplementedStudentServiceServer
