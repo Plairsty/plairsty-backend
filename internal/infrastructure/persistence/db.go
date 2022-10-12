@@ -14,6 +14,10 @@ type Repositories struct {
 		Get(id int64) (*studentPb.Student, error)
 		Update(student *studentPb.Student) error
 		Delete(id int64) error
+
+		CheckProfileStatus(id int64) (bool, error)
+		GetGPA(id int64) (*studentPb.Gpa, error)
+		UpdateGPA(id int64, gpa *studentPb.Gpa) error
 	}
 	Resume interface {
 		Insert(resume *resumePb.Resume, id int) error

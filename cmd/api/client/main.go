@@ -54,8 +54,8 @@ func main() {
 		}
 	}(conn2)
 
-	//studentClient := studentPb.NewStudentServiceClient(conn2)
-	//GetStudent(context.Background(), studentClient)
+	studentClient := studentPb.NewStudentServiceClient(conn2)
+	GetStudent(context.Background(), studentClient)
 	//CreateStudent(context.Background(), studentClient)
 	//UpdateStudent(context.Background(), studentClient)
 
@@ -70,8 +70,8 @@ func main() {
 	//CreateHiring(context.Background(), hrClient)
 	//GetHiring(context.Background(), hrClient)
 
-	jobApplicationClient := jobApplicationPb.NewJobApplicationServiceClient(conn2)
-	CreateJobApplication(context.Background(), jobApplicationClient)
+	//jobApplicationClient := jobApplicationPb.NewJobApplicationServiceClient(conn2)
+	//CreateJobApplication(context.Background(), jobApplicationClient)
 }
 func GetStudent(
 	ctx context.Context,

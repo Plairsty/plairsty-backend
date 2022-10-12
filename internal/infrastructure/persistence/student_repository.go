@@ -97,3 +97,56 @@ func (r studentRepository) Delete(id int64) error {
 	_, err := r.DB.Exec(query, id)
 	return err
 }
+
+func (r studentRepository) CheckProfileStatus(id int64) (bool, error) {
+	query := `
+		SELECT status
+		FROM students
+		WHERE id = $1`
+	var exists bool
+	err := r.DB.QueryRow(query, id).Scan(&exists)
+	return exists, err
+}
+
+func (r studentRepository) GetGPA(id int64) (*studentPb.Gpa, error) {
+	query := `
+		SELECT semester1, semester2, semester3, semester4, semester5, semester6, semester7, semester8
+		FROM students
+		WHERE id = $1`
+
+	var gpa studentPb.Gpa
+	err := r.DB.QueryRow(query, id).Scan(
+		&gpa.Gpa_1,
+		&gpa.Gpa_2,
+		&gpa.Gpa_3,
+		&gpa.Gpa_4,
+		&gpa.Gpa_5,
+		&gpa.Gpa_6,
+		&gpa.Gpa_7,
+		&gpa.Gpa_8,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &gpa, nil
+}
+
+func (r studentRepository) UpdateGPA(id int64, gpa *studentPb.Gpa) error {
+	query := `
+		UPDATE students
+		SET semester1 = $1, semester2 = $2, semester3 = $3, semester4 = $4, semester5 = $5, semester6 = $6, semester7 = $7, semester8 = $8
+		WHERE id = $9`
+	args := []interface{}{
+		gpa.Gpa_1,
+		gpa.Gpa_2,
+		gpa.Gpa_3,
+		gpa.Gpa_4,
+		gpa.Gpa_5,
+		gpa.Gpa_6,
+		gpa.Gpa_7,
+		gpa.Gpa_8,
+		id,
+	}
+	_, err := r.DB.Exec(query, args...)
+	return err
+}

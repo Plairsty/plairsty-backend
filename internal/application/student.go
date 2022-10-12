@@ -62,3 +62,43 @@ func (app *Application) UpdateStudent(
 		Message: "student updated",
 	}, nil
 }
+
+func (app *Application) IsProfileCompleted(
+	_ context.Context,
+	in *studentPb.IsProfileCompletedRequest,
+) (*studentPb.IsProfileCompletedResponse, error) {
+	dbRes, err := app.persistence.Student.CheckProfileStatus(int64(in.GetId()))
+	if err != nil {
+		return nil, err
+	}
+	return &studentPb.IsProfileCompletedResponse{
+		IsProfileCompleted: dbRes,
+	}, nil
+}
+
+func (app *Application) GetGPA(
+	_ context.Context,
+	in *studentPb.GPARequest,
+) (*studentPb.GPAResponse, error) {
+	dbRes, err := app.persistence.Student.GetGPA(int64(in.GetId()))
+	if err != nil {
+		return nil, err
+	}
+	return &studentPb.GPAResponse{
+		Gpa: dbRes,
+	}, nil
+}
+
+func (app *Application) UpdateGPA(
+	_ context.Context,
+	in *studentPb.UpdateGPARequest,
+) (*studentPb.UpdateGPAResponse, error) {
+	err := app.persistence.Student.UpdateGPA(int64(in.GetId()), in.GetGpa())
+	if err != nil {
+		return nil, err
+	}
+	return &studentPb.UpdateGPAResponse{
+		Success: true,
+		Message: "gpa updated",
+	}, nil
+}
