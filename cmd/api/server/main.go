@@ -3,7 +3,6 @@ package main
 import (
 	"awesomeProject/internal/application"
 	"awesomeProject/internal/infrastructure/persistence"
-	"awesomeProject/internal/interfaces/interceptors"
 	jobApplicationPb "awesomeProject/internal/proto/application"
 	authPb "awesomeProject/internal/proto/auth"
 	sys "awesomeProject/internal/proto/health"
@@ -89,8 +88,8 @@ func main() {
 
 	// Create a new gRPC server with the UnaryServerInterceptor and StreamServerInterceptor 🦹
 	server := grpc.NewServer(
-		grpc.UnaryInterceptor(interceptors.Unary()),
-		grpc.StreamInterceptor(interceptors.Stream()),
+		grpc.UnaryInterceptor(app.Unary()),
+		grpc.StreamInterceptor(app.Stream()),
 	)
 
 	// Register your services here 🥵

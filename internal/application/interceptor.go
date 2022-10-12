@@ -1,4 +1,4 @@
-package interceptors
+package model
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-func Unary() grpc.UnaryServerInterceptor {
+func (app *Application) Unary() grpc.UnaryServerInterceptor {
 	return func(
 		ctx context.Context,
 		req interface{},
@@ -18,7 +18,7 @@ func Unary() grpc.UnaryServerInterceptor {
 	}
 }
 
-func Stream() grpc.StreamServerInterceptor {
+func (app *Application) Stream() grpc.StreamServerInterceptor {
 	return func(
 		srv interface{},
 		stream grpc.ServerStream,
