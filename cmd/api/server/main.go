@@ -3,6 +3,7 @@ package main
 import (
 	"awesomeProject/internal/application"
 	"awesomeProject/internal/infrastructure/persistence"
+	"awesomeProject/internal/infrastructure/service"
 	jobApplicationPb "awesomeProject/internal/proto/application"
 	authPb "awesomeProject/internal/proto/auth"
 	sys "awesomeProject/internal/proto/health"
@@ -69,8 +70,21 @@ func main() {
 		Key:    "folder1/",
 	}
 
+	jwtManager := service.NewJwtManager(
+		os.Getenv("PLAIRSTY_JWT_SECRET"),
+		os.Getenv("PLAIRSTY_JWT_ISSUER"),
+		time.Hour*1,
+	)
+
 	// After all configuration is done, we can create a new application instance.
-	app := model.NewApplication(cfg, logger, db, S3)
+	app := model.NewApplication(
+		cfg,
+		logger,
+		db,
+		S3,
+		jwtManager,
+		accessibleRoles(),
+	)
 
 	// Register gRPC server
 	lis, err := net.Listen("tcp", cfg.Port)
@@ -173,4 +187,11 @@ func openDB(cfg model.Config) (*sql.DB, error) {
 		return nil, err
 	}
 	return db, nil
+}
+
+func accessibleRoles() map[string][]string {
+	//const authServicePath = "/auth.AuthService/"
+	return map[string][]string{
+		//authServicePath + "Register": {"admin"},
+	}
 }

@@ -1,7 +1,8 @@
 server:
 	go run ./cmd/api/server/main.go
+
 prod:
-	go run ./cmd/api/server/main.go -port :8080
+	go run ./cmd/api/server/main.go -port :8000
 
 client:
 	go run ./cmd/api/client/main.go

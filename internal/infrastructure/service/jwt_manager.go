@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"github.com/golang-jwt/jwt"
+	"log"
 
 	"time"
 )
@@ -28,6 +29,7 @@ func NewJwtManager(
 	issuer string,
 	tokenDuration time.Duration,
 ) *JwtManager {
+	log.Println("Jwt manager created 👾")
 	return &JwtManager{
 		secretKey:     secretKey,
 		issuer:        issuer,

@@ -39,10 +39,19 @@ type Application struct {
 	jobApplicationPb.UnimplementedJobApplicationServiceServer
 }
 
-func NewApplication(config Config, logger *log.Logger, DB *sql.DB, S3 *persistence.S3) *Application {
+func NewApplication(
+	config Config,
+	logger *log.Logger,
+	DB *sql.DB,
+	S3 *persistence.S3,
+	jwtManager *service.JwtManager,
+	accessibleRoles map[string][]string,
+) *Application {
 	return &Application{
-		config:      config,
-		logger:      logger,
-		persistence: persistence.NewRepositories(DB, S3),
+		config:          config,
+		logger:          logger,
+		persistence:     persistence.NewRepositories(DB, S3),
+		jwtManager:      jwtManager,
+		accessibleRoles: accessibleRoles,
 	}
 }
