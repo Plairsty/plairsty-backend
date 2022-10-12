@@ -101,3 +101,16 @@ func (app *Application) GetAllJobs(
 		Jobs: res,
 	}, nil
 }
+
+func (app *Application) GetJobById(
+	_ context.Context,
+	in *hrPb.GetJobById,
+) (*hrPb.GetJobByIdResponse, error) {
+	res, err := app.persistence.Job.GetJobById(int(in.GetId()))
+	if err != nil {
+		return nil, err
+	}
+	return &hrPb.GetJobByIdResponse{
+		Job: res,
+	}, nil
+}

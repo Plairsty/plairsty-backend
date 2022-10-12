@@ -6,6 +6,7 @@ import (
 )
 
 func (app *Application) AddJobApplication(_ context.Context, in *jobApplicationPb.JobApplicationRequest) (*jobApplicationPb.JobApplicationResponse, error) {
+	// If cgpa is less than required then reject
 	err := app.persistence.JobApplication.Insert(int(in.Application.GetStudentId()), int(in.Application.GetJobId()))
 	if err != nil {
 		return nil, err

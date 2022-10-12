@@ -30,7 +30,7 @@ type HrServiceClient interface {
 	// Shall be used by students.
 	GetJob(ctx context.Context, in *GetJobRequest, opts ...grpc.CallOption) (*GetJobResponse, error)
 	GetAllJobs(ctx context.Context, in *GetAllJobsRequest, opts ...grpc.CallOption) (*GetAllJobsResponse, error)
-	GetRecentJobs(ctx context.Context, in *GetRecentJobsRequest, opts ...grpc.CallOption) (*GetRecentJobsResponse, error)
+	GetJobById(ctx context.Context, in *GetJobById, opts ...grpc.CallOption) (*GetJobByIdResponse, error)
 }
 
 type hrServiceClient struct {
@@ -104,9 +104,9 @@ func (c *hrServiceClient) GetAllJobs(ctx context.Context, in *GetAllJobsRequest,
 	return out, nil
 }
 
-func (c *hrServiceClient) GetRecentJobs(ctx context.Context, in *GetRecentJobsRequest, opts ...grpc.CallOption) (*GetRecentJobsResponse, error) {
-	out := new(GetRecentJobsResponse)
-	err := c.cc.Invoke(ctx, "/hr.hrService/GetRecentJobs", in, out, opts...)
+func (c *hrServiceClient) GetJobById(ctx context.Context, in *GetJobById, opts ...grpc.CallOption) (*GetJobByIdResponse, error) {
+	out := new(GetJobByIdResponse)
+	err := c.cc.Invoke(ctx, "/hr.hrService/GetJobById", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -125,7 +125,7 @@ type HrServiceServer interface {
 	// Shall be used by students.
 	GetJob(context.Context, *GetJobRequest) (*GetJobResponse, error)
 	GetAllJobs(context.Context, *GetAllJobsRequest) (*GetAllJobsResponse, error)
-	GetRecentJobs(context.Context, *GetRecentJobsRequest) (*GetRecentJobsResponse, error)
+	GetJobById(context.Context, *GetJobById) (*GetJobByIdResponse, error)
 	mustEmbedUnimplementedHrServiceServer()
 }
 
@@ -154,8 +154,8 @@ func (UnimplementedHrServiceServer) GetJob(context.Context, *GetJobRequest) (*Ge
 func (UnimplementedHrServiceServer) GetAllJobs(context.Context, *GetAllJobsRequest) (*GetAllJobsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllJobs not implemented")
 }
-func (UnimplementedHrServiceServer) GetRecentJobs(context.Context, *GetRecentJobsRequest) (*GetRecentJobsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetRecentJobs not implemented")
+func (UnimplementedHrServiceServer) GetJobById(context.Context, *GetJobById) (*GetJobByIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetJobById not implemented")
 }
 func (UnimplementedHrServiceServer) mustEmbedUnimplementedHrServiceServer() {}
 
@@ -296,20 +296,20 @@ func _HrService_GetAllJobs_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HrService_GetRecentJobs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetRecentJobsRequest)
+func _HrService_GetJobById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetJobById)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(HrServiceServer).GetRecentJobs(ctx, in)
+		return srv.(HrServiceServer).GetJobById(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hr.hrService/GetRecentJobs",
+		FullMethod: "/hr.hrService/GetJobById",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HrServiceServer).GetRecentJobs(ctx, req.(*GetRecentJobsRequest))
+		return srv.(HrServiceServer).GetJobById(ctx, req.(*GetJobById))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -350,8 +350,8 @@ var HrService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _HrService_GetAllJobs_Handler,
 		},
 		{
-			MethodName: "GetRecentJobs",
-			Handler:    _HrService_GetRecentJobs_Handler,
+			MethodName: "GetJobById",
+			Handler:    _HrService_GetJobById_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

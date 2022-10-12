@@ -34,6 +34,7 @@ type Repositories struct {
 		GetAll() ([]*hrPb.JobFields, error)
 		Update(job *hrPb.JobFields) error
 		Delete(id int64) error
+		GetJobById(userId int) (*hrPb.JobFields, error)
 	}
 	JobApplication interface {
 		Insert(userId, jobId int) error

@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package hr;
 option go_package = "hr/hrPb";
+import "google/protobuf/timestamp.proto";
 
 message hr {
   string name = 1;
@@ -58,6 +59,7 @@ message job_fields {
   string title = 10;
   string company = 11;
   int64 hr_id = 12;
+  google.protobuf.Timestamp timestamp = 13;
 }
 
 message createHiringRequest {
@@ -100,9 +102,12 @@ message getAllJobsResponse {
   repeated job_fields jobs = 1;
 }
 
-message getRecentJobsRequest {}
-message getRecentJobsResponse {
-  repeated job_fields jobs = 1;
+message getJobById{
+  int64 id = 1;
+}
+
+message getJobByIdResponse {
+  job_fields job = 1;
 }
 
 
@@ -116,5 +121,5 @@ service hrService {
   // Shall be used by students.
   rpc GetJob (getJobRequest) returns (getJobResponse) {}
   rpc GetAllJobs (getAllJobsRequest) returns (getAllJobsResponse) {}
-  rpc GetRecentJobs (getRecentJobsRequest) returns (getRecentJobsResponse) {}
+  rpc GetJobById (getJobById) returns (getJobByIdResponse) {}
 }
