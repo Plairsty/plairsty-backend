@@ -50,9 +50,9 @@ func (r studentRepository) Get(id int64) (*studentPb.Student, error) {
 	//	return nil, errors.New("invalid id")
 	//}
 	query := `
-		SELECT id, first_name, middle_name, last_name, email, image_url
+		SELECT id, first_name, middle_name, last_name, email, image_url, moodle
 		FROM students
-		WHERE id = $1`
+		WHERE moodle = $1`
 	var student studentPb.Student
 	err := r.DB.QueryRow(query, id).Scan(
 		&student.Id,
@@ -77,8 +77,8 @@ func (r studentRepository) Update(student *studentPb.Student) error {
 	query := `
 		UPDATE students
 		SET first_name = $1, middle_name = $2, last_name = $3, email = $4, image_url = $5
-		WHERE id = $6
-		RETURNING id`
+		WHERE moodle = $6
+		RETURNING moodle`
 	args := []interface{}{
 		student.FirstName,
 		student.MiddleName,
@@ -93,7 +93,7 @@ func (r studentRepository) Update(student *studentPb.Student) error {
 func (r studentRepository) Delete(id int64) error {
 	query := `
 		DELETE FROM students
-		WHERE id = $1`
+		WHERE moodle = $1`
 	_, err := r.DB.Exec(query, id)
 	return err
 }
@@ -102,7 +102,7 @@ func (r studentRepository) CheckProfileStatus(id int64) (bool, error) {
 	query := `
 		SELECT status
 		FROM students
-		WHERE id = $1`
+		WHERE moodle = $1`
 	var exists bool
 	err := r.DB.QueryRow(query, id).Scan(&exists)
 	return exists, err
@@ -112,7 +112,7 @@ func (r studentRepository) GetGPA(id int64) (*studentPb.Gpa, error) {
 	query := `
 		SELECT semester1, semester2, semester3, semester4, semester5, semester6, semester7, semester8
 		FROM students
-		WHERE id = $1`
+		WHERE moodle = $1`
 
 	var gpa studentPb.Gpa
 	err := r.DB.QueryRow(query, id).Scan(
@@ -135,7 +135,7 @@ func (r studentRepository) UpdateGPA(id int64, gpa *studentPb.Gpa) error {
 	query := `
 		UPDATE students
 		SET semester1 = $1, semester2 = $2, semester3 = $3, semester4 = $4, semester5 = $5, semester6 = $6, semester7 = $7, semester8 = $8
-		WHERE id = $9`
+		WHERE moodle = $9`
 	args := []interface{}{
 		gpa.Gpa_1,
 		gpa.Gpa_2,

@@ -16,6 +16,7 @@ type Repositories struct {
 		DeleteByUsername(username string) error
 	}
 	Student interface {
+		// Please note that, id means here I'm refering to moodle id
 		Insert(student *studentPb.Student) error
 		Get(id int64) (*studentPb.Student, error)
 		Update(student *studentPb.Student) error
