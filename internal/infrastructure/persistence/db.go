@@ -2,6 +2,7 @@ package persistence
 
 import (
 	jobApplicationPb "awesomeProject/internal/proto/application"
+	authPb "awesomeProject/internal/proto/auth"
 	hrPb "awesomeProject/internal/proto/hr"
 	resumePb "awesomeProject/internal/proto/resume"
 	studentPb "awesomeProject/internal/proto/student"
@@ -9,6 +10,11 @@ import (
 )
 
 type Repositories struct {
+	User interface {
+		Insert(user *authPb.UserFields, hashedPassword string) error
+		GetByUsername(username string) (*authPb.UserFields, error)
+		DeleteByUsername(username string) error
+	}
 	Student interface {
 		Insert(student *studentPb.Student) error
 		Get(id int64) (*studentPb.Student, error)
@@ -49,6 +55,7 @@ type Repositories struct {
 
 func NewRepositories(db *sql.DB, s3 *S3) *Repositories {
 	return &Repositories{
+		User:           userRepository{DB: db},
 		Student:        studentRepository{DB: db},
 		Resume:         ResumeRepository{DB: db, S3: s3},
 		Hr:             hrRepository{DB: db},
