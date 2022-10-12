@@ -55,9 +55,13 @@ func main() {
 	}(conn2)
 
 	studentClient := studentPb.NewStudentServiceClient(conn2)
-	GetStudent(context.Background(), studentClient)
+	//GetStudent(context.Background(), studentClient)
 	//CreateStudent(context.Background(), studentClient)
 	//UpdateStudent(context.Background(), studentClient)
+	IsProfileCompleted(context.Background(), studentClient)
+	GetGPA(context.Background(), studentClient)
+	UpdateGPA(context.Background(), studentClient)
+	GetGPA(context.Background(), studentClient)
 
 	//resumeClient := resumePb.NewResumeServiceClient(conn2)
 	//UploadPdf(context.Background(), resumeClient)
@@ -239,7 +243,7 @@ func DeleteHr(ctx context.Context, in hrPb.HrServiceClient) {
 func CreateHiring(ctx context.Context, in hrPb.HrServiceClient) {
 	r, err := in.CreateHiring(ctx, &hrPb.CreateHiringRequest{
 		HrId: 4,
-		Job: &hrPb.Job{
+		Job: &hrPb.JobFields{
 			Role:           "Frontend Developer",
 			Department:     "Information Technology",
 			Skills:         "React, Redux, TypeScript, JavaScript, HTML, CSS",
@@ -277,4 +281,37 @@ func CreateJobApplication(ctx context.Context, in jobApplicationPb.JobApplicatio
 		log.Fatalln(err)
 	}
 	log.Println(r)
+}
+
+func IsProfileCompleted(ctx context.Context, in studentPb.StudentServiceClient) {
+	r, err := in.IsProfileCompleted(ctx, &studentPb.IsProfileCompletedRequest{
+		Id: 134020434,
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println("IsProfile: ", r.IsProfileCompleted)
+}
+
+func GetGPA(ctx context.Context, in studentPb.StudentServiceClient) {
+	r, err := in.GetGPA(ctx, &studentPb.GPARequest{
+		Id: 134020434,
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println("GPA: ", r.GetGpa().Gpa_1)
+}
+
+func UpdateGPA(ctx context.Context, in studentPb.StudentServiceClient) {
+	r, err := in.UpdateGPA(ctx, &studentPb.UpdateGPARequest{
+		Id: 134020434,
+		Gpa: &studentPb.Gpa{
+			Gpa_1: 9.0,
+		},
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println("Update Status: ", r)
 }
