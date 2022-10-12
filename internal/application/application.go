@@ -3,6 +3,7 @@ package model
 import (
 	"awesomeProject/internal/infrastructure/persistence"
 	jobApplicationPb "awesomeProject/internal/proto/application"
+	authPb "awesomeProject/internal/proto/auth"
 	sys "awesomeProject/internal/proto/health"
 	hrPb "awesomeProject/internal/proto/hr"
 	resumePb "awesomeProject/internal/proto/resume"
@@ -28,6 +29,7 @@ type Application struct {
 	logger      *log.Logger
 	persistence *persistence.Repositories
 	sys.UnimplementedHealthCheckServer
+	authPb.UnimplementedAuthServiceServer
 	studentPb.UnimplementedStudentServiceServer
 	resumePb.UnimplementedResumeServiceServer
 	hrPb.UnimplementedHrServiceServer

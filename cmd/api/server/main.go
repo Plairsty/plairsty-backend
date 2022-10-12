@@ -5,6 +5,7 @@ import (
 	"awesomeProject/internal/infrastructure/persistence"
 	"awesomeProject/internal/interfaces/interceptors"
 	jobApplicationPb "awesomeProject/internal/proto/application"
+	authPb "awesomeProject/internal/proto/auth"
 	sys "awesomeProject/internal/proto/health"
 	hrPb "awesomeProject/internal/proto/hr"
 	resumePb "awesomeProject/internal/proto/resume"
@@ -97,6 +98,7 @@ func main() {
 	// Check if you have implemented the method in your service implementation
 	// And then check if you have added unimplemented method in your service struct
 	sys.RegisterHealthCheckServer(server, app)
+	authPb.RegisterAuthServiceServer(server, app)
 	studentPb.RegisterStudentServiceServer(server, app)
 	resumePb.RegisterResumeServiceServer(server, app)
 	hrPb.RegisterHrServiceServer(server, app)
