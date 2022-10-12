@@ -14,6 +14,9 @@ type Repositories struct {
 		Insert(user *authPb.UserFields, hashedPassword string) error
 		GetByUsername(username string) (*authPb.UserFields, error)
 		DeleteByUsername(username string) error
+
+		// Functions solely for auth
+		Get(username string) (hashedPassword, role string, err error)
 	}
 	Student interface {
 		// Please note that, id means here I'm refering to moodle id

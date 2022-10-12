@@ -43,6 +43,19 @@ func (u userRepository) GetByUsername(username string) (*authPb.UserFields, erro
 	return &user, nil
 }
 
+func (u userRepository) Get(username string) (hashedPassword, role string, err error) {
+	query := `
+		SELECT hashedpassword, type
+		FROM "user"
+		WHERE username = $1
+		`
+	err = u.DB.QueryRow(query, username).Scan(&hashedPassword, &role)
+	if err != nil {
+		return "", "", err
+	}
+	return hashedPassword, role, nil
+}
+
 func (u userRepository) DeleteByUsername(username string) error {
 	query := `
 		DELETE FROM "user"

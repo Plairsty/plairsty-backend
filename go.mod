@@ -4,8 +4,10 @@ go 1.18
 
 require (
 	github.com/aws/aws-sdk-go v1.44.114
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/joho/godotenv v1.4.0
 	github.com/lib/pq v1.10.7
+	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
 	google.golang.org/grpc v1.49.0
 	google.golang.org/protobuf v1.28.1
 )
