@@ -24,7 +24,6 @@ const _ = grpc.SupportPackageIsVersion7
 type StudentServiceClient interface {
 	// Any user can call this
 	GetStudent(ctx context.Context, in *GetStudentRequest, opts ...grpc.CallOption) (*GetStudentResponse, error)
-	// Only admin can call this to create a new student
 	CreateStudent(ctx context.Context, in *CreateStudentRequest, opts ...grpc.CallOption) (*CreateStudentResponse, error)
 	// Only admin can call this to delete a student
 	DeleteStudent(ctx context.Context, in *DeleteStudentRequest, opts ...grpc.CallOption) (*DeleteStudentResponse, error)
@@ -112,7 +111,6 @@ func (c *studentServiceClient) UpdateGPA(ctx context.Context, in *UpdateGPAReque
 type StudentServiceServer interface {
 	// Any user can call this
 	GetStudent(context.Context, *GetStudentRequest) (*GetStudentResponse, error)
-	// Only admin can call this to create a new student
 	CreateStudent(context.Context, *CreateStudentRequest) (*CreateStudentResponse, error)
 	// Only admin can call this to delete a student
 	DeleteStudent(context.Context, *DeleteStudentRequest) (*DeleteStudentResponse, error)

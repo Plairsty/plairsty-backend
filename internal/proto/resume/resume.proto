@@ -16,10 +16,12 @@ enum STATUS {
 
 message ResumeUploadRequest {
   Resume resume = 1;
+  int64 id = 2;
 }
 
 message ResumeUploadResponse {
   STATUS status = 1;
+  string url = 2;
 }
 
 message getResumeRequest {

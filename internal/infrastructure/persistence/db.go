@@ -21,13 +21,13 @@ type Repositories struct {
 	Student interface {
 		// Please note that, id means here I'm refering to moodle id
 		Insert(student *studentPb.Student) error
-		Get(id int64) (*studentPb.Student, error)
+		Get(id string) (*studentPb.Student, error)
 		Update(student *studentPb.Student) error
 		Delete(id int64) error
 
-		CheckProfileStatus(id int64) (bool, error)
-		GetGPA(id int64) (*studentPb.Gpa, error)
-		UpdateGPA(id int64, gpa *studentPb.Gpa) error
+		CheckProfileStatus(id string) (bool, error)
+		GetGPA(id string) (*studentPb.Gpa, error)
+		UpdateGPA(id string, gpa *studentPb.Gpa) error
 	}
 	Resume interface {
 		Insert(resume *resumePb.Resume, id int) error

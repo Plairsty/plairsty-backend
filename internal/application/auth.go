@@ -1,7 +1,6 @@
 package model
 
 import (
-	"awesomeProject/internal/infrastructure/service"
 	authPb "awesomeProject/internal/proto/auth"
 	"context"
 	"database/sql"
@@ -10,13 +9,15 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+	"strings"
 )
 
 func (app *Application) Register(
 	_ context.Context,
 	req *authPb.RegisterRequest,
 ) (*authPb.RegisterResponse, error) {
-	generatedPassword := service.GeneratePassword()
+	//generatedPassword := service.GeneratePassword()
+	generatedPassword := req.GetUser().GetUsername() + "@123"
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(generatedPassword), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
@@ -35,7 +36,7 @@ func (app *Application) Login(
 	_ context.Context,
 	req *authPb.LoginRequest,
 ) (*authPb.LoginResponse, error) {
-	hashedPassword, role, err := app.persistence.User.Get(req.GetUsername())
+	hashedPassword, role, err := app.persistence.User.Get(strings.Trim(req.GetUsername(), " "))
 	if err == sql.ErrNoRows {
 		return nil, errors.New("user not found")
 	}
@@ -68,7 +69,7 @@ func (app *Application) Authorize(
 ) error {
 	accessibleRole, ok := app.accessibleRoles[method]
 	if !ok {
-		return status.Error(codes.NotFound, "method not found")
+		return nil // no need to authorize this route which is not present in accessibleRoles
 	}
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {

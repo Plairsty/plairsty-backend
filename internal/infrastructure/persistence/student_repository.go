@@ -4,6 +4,7 @@ import (
 	studentPb "awesomeProject/internal/proto/student"
 	"database/sql"
 	"errors"
+	"strings"
 )
 
 type studentRepository struct {
@@ -14,15 +15,16 @@ type studentRepository struct {
 /// Currently I'm assuming that we won't be getting student phone
 func (r studentRepository) Insert(student *studentPb.Student) error {
 	query := `
-		INSERT INTO students (id, first_name, middle_name, last_name, email)
-		VALUES ($1, $2, $3, $4, $5)
+		INSERT INTO students (first_name, middle_name, last_name, email, moodle, status)
+		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING id, created_at`
 	args := []interface{}{
-		student.Id,
-		student.FirstName,
-		student.MiddleName,
-		student.LastName,
-		student.Email,
+		strings.Trim(student.FirstName, " "),
+		strings.Trim(student.MiddleName, " "),
+		strings.Trim(student.LastName, " "),
+		strings.Trim(student.Email, " "),
+		strings.Trim(student.Username, " "),
+		true,
 	}
 	err := r.DB.QueryRow(query, args...).Scan(&student.Id, &student.ImageUrl)
 	if err != nil {
@@ -34,6 +36,10 @@ func (r studentRepository) Insert(student *studentPb.Student) error {
 		VALUES ($1, $2, $3)
 		RETURNING id`
 	for _, phone := range student.Phones {
+		// Check if phone number is valid
+		if phone.Number == "" {
+			continue
+		}
 		_, err := r.DB.Exec(phoneQuery, student.Id, phone.Number, phone.Type)
 		if err != nil {
 			return err
@@ -42,7 +48,7 @@ func (r studentRepository) Insert(student *studentPb.Student) error {
 	return nil
 }
 
-func (r studentRepository) Get(id int64) (*studentPb.Student, error) {
+func (r studentRepository) Get(id string) (*studentPb.Student, error) {
 	// if length of id is not 8 then return error
 
 	// TODO: Uncomment this when using in production
@@ -50,7 +56,7 @@ func (r studentRepository) Get(id int64) (*studentPb.Student, error) {
 	//	return nil, errors.New("invalid id")
 	//}
 	query := `
-		SELECT id, first_name, middle_name, last_name, email, image_url, moodle
+		SELECT id, first_name, middle_name, last_name, email, image_url, moodle, status
 		FROM students
 		WHERE moodle = $1`
 	var student studentPb.Student
@@ -61,6 +67,8 @@ func (r studentRepository) Get(id int64) (*studentPb.Student, error) {
 		&student.LastName,
 		&student.Email,
 		&student.ImageUrl,
+		&student.Username,
+		&student.IsProfileCompleted,
 	)
 	if err != nil {
 		switch {
@@ -98,7 +106,7 @@ func (r studentRepository) Delete(id int64) error {
 	return err
 }
 
-func (r studentRepository) CheckProfileStatus(id int64) (bool, error) {
+func (r studentRepository) CheckProfileStatus(id string) (bool, error) {
 	query := `
 		SELECT status
 		FROM students
@@ -108,7 +116,7 @@ func (r studentRepository) CheckProfileStatus(id int64) (bool, error) {
 	return exists, err
 }
 
-func (r studentRepository) GetGPA(id int64) (*studentPb.Gpa, error) {
+func (r studentRepository) GetGPA(id string) (*studentPb.Gpa, error) {
 	query := `
 		SELECT semester1, semester2, semester3, semester4, semester5, semester6, semester7, semester8
 		FROM students
@@ -131,7 +139,7 @@ func (r studentRepository) GetGPA(id int64) (*studentPb.Gpa, error) {
 	return &gpa, nil
 }
 
-func (r studentRepository) UpdateGPA(id int64, gpa *studentPb.Gpa) error {
+func (r studentRepository) UpdateGPA(id string, gpa *studentPb.Gpa) error {
 	query := `
 		UPDATE students
 		SET semester1 = $1, semester2 = $2, semester3 = $3, semester4 = $4, semester5 = $5, semester6 = $6, semester7 = $7, semester8 = $8

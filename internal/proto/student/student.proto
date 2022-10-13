@@ -59,6 +59,7 @@ message Student {
 
   // This requires user to add his phone, email and name
   bool isProfileCompleted = 12;
+  string username = 13;
 }
 
 message UpdateStudentRequest {
@@ -91,15 +92,15 @@ message DeleteStudentResponse {
 
 // Any user can execute this
 message GetStudentRequest {
-  uint64 id = 1;
+  string id = 1;
 }
 
 message GetStudentResponse {
-  repeated Student student = 1;
+  Student student = 1;
 }
 
 message IsProfileCompletedRequest {
-  uint64 id = 1;
+  string id = 1;
 }
 
 message IsProfileCompletedResponse {
@@ -108,7 +109,7 @@ message IsProfileCompletedResponse {
 
 // GPA message
 message GPARequest {
-  uint64 id = 1;
+  string id = 1;
 }
 // Average doesn't counts the gpa who's value is 0
 message GPAResponse {
@@ -117,7 +118,7 @@ message GPAResponse {
 
 // Update GPA
 message UpdateGPARequest {
-  uint64 id = 1;
+  string id = 1;
   Gpa gpa = 2;
 }
 
@@ -126,6 +127,13 @@ message UpdateGPAResponse {
   string message = 2;
 }
 
+message GetStudentProfileRequest {
+  string id = 1;
+}
+
+message GetStudentProfileResponse {
+  Student student = 1;
+}
 
 
 
@@ -134,7 +142,6 @@ service StudentService {
   // Any user can call this
   rpc GetStudent(GetStudentRequest) returns (GetStudentResponse);
 
-  // Only admin can call this to create a new student
   rpc CreateStudent(CreateStudentRequest) returns (CreateStudentResponse);
   // Only admin can call this to delete a student
   rpc DeleteStudent(DeleteStudentRequest) returns (DeleteStudentResponse);
