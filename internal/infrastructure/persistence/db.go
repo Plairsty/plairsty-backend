@@ -33,6 +33,7 @@ type Repositories struct {
 		Insert(resume *resumePb.Resume, id int) error
 		Get(id int64) (string, error)
 		Delete(id int64) error
+		InsertUrl(url string, id int) error
 	}
 
 	Hr interface {

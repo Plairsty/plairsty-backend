@@ -6,9 +6,11 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+
 	"log"
 	"strconv"
 )
@@ -24,10 +26,13 @@ type ResumeRepository struct {
 func (r ResumeRepository) Insert(resume *resumePb.Resume, id int) error {
 	file := resume.Data
 	f := bytes.NewReader(file)
-
+	cred := credentials.NewStaticCredentials(
+		r.S3.ApiId, r.S3.ApiToken, "",
+	)
 	s3session := session.Must(session.NewSession(
 		&aws.Config{
-			Region: aws.String(r.S3.Region),
+			Region:      aws.String(r.S3.Region),
+			Credentials: cred,
 		}))
 	uploader := s3manager.NewUploader(s3session)
 	key := fmt.Sprintf("%s%d.pdf", r.S3.Key, id)
@@ -43,10 +48,10 @@ func (r ResumeRepository) Insert(resume *resumePb.Resume, id int) error {
 	}
 	// Insert the resume into db, overwrite if already exists
 	query := `
-			INSERT INTO resume (student_id, resume_url) 
-			VALUES ($1, $2) 
-			ON CONFLICT (student_id) 
-    		DO UPDATE SET resume_url = $2`
+			INSERT INTO resume (student_id, resume_url)
+			VALUES ($1, $2)
+			ON CONFLICT (student_id)
+			DO UPDATE SET resume_url = $2`
 	_, err = r.DB.Exec(query, id, res.Location)
 	if err != nil {
 		return err
@@ -64,6 +69,20 @@ func (r ResumeRepository) Get(id int64) (string, error) {
 		return "", err
 	}
 	return resumeUrl, nil
+}
+
+func (r ResumeRepository) InsertUrl(url string, id int) error {
+	query := `
+			INSERT INTO resume (student_id, resume_url) 
+			VALUES ($1, $2) 
+			ON CONFLICT (student_id) 
+    		DO UPDATE SET resume_url = $2`
+	_, err := r.DB.Exec(query, id, url)
+	if err != nil {
+		return err
+	}
+	return nil
+
 }
 
 func (r ResumeRepository) Delete(id int64) error {

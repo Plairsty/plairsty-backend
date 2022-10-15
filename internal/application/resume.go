@@ -14,6 +14,8 @@ const maxResumeSize = 2 << 20
 func (app *Application) UploadResume(server resumePb.ResumeService_UploadResumeServer) error {
 	data := bytes.Buffer{}
 	dataSize := 0
+	userId := 0
+
 	for {
 		log.Println("Waiting for data")
 		req, err := server.Recv()
@@ -24,11 +26,12 @@ func (app *Application) UploadResume(server resumePb.ResumeService_UploadResumeS
 		if err != nil {
 			return err
 		}
-
-		chunk := req.GetResume().GetData()
+		userId = int(req.GetId())
+		chunk := req.Resume.GetData()
 		size := len(chunk)
-		app.logger.Printf("received a chunk with size: %d", size)
 		dataSize += size
+
+		app.logger.Printf("received a chunk with size: %d", size)
 		if dataSize > maxResumeSize {
 			return errors.New("file size limit exceeded")
 		}
@@ -41,13 +44,23 @@ func (app *Application) UploadResume(server resumePb.ResumeService_UploadResumeS
 	resume := resumePb.Resume{
 		Data: data.Bytes(),
 	}
-	err := app.persistence.Resume.Insert(&resume, 355284088) // This id will be passed by interceptor
+	err := app.persistence.Resume.Insert(&resume, userId) // This id will be passed by interceptor
 	if err != nil {
 		return err
 	}
 	return server.SendAndClose(&resumePb.ResumeUploadResponse{
 		Status: resumePb.STATUS_STATUS_APPROVED,
 	})
+}
+
+func (app *Application) UploadResumeUrl(_ context.Context, request *resumePb.UploadResumeUrlRequest) (*resumePb.UploadResumeUrlResponse, error) {
+	err := app.persistence.Resume.InsertUrl(request.Url, int(request.Id))
+	if err != nil {
+		return nil, err
+	}
+	return &resumePb.UploadResumeUrlResponse{
+		Success: true,
+	}, nil
 }
 
 func (app *Application) GetResume(_ context.Context, req *resumePb.GetResumeRequest) (*resumePb.GetResumeResponse, error) {
