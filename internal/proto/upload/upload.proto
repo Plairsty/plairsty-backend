@@ -1,25 +1,47 @@
-syntax="proto3";
+syntax = "proto3";
 
 package upload;
-option go_package="upload/uploadPb";
+option go_package = "upload/uploadPb";
 
-message ImageInfo {
-  string moodle_id = 1;
-  string image_type = 2;
+enum FILE_TYPE {
+  TYPE_UNKNOWN = 0;
+  TYPE_CERT = 1;
+  TYPE_COURSE_COMPLETION = 2;
+}
+message FileMetaData {
+  string title = 1;
+  string description = 2;
+  string date = 3;
 }
 
-message UploadProfileImageRequest {
-  oneof data {
-    ImageInfo info = 1;
-    bytes chunk_data = 2;
-  };
+message UploadRequest {
+  FILE_TYPE fileType = 1;
+  FileMetaData metaData = 2;
+  bytes fileData = 3;
 }
 
-message UploadImageResponse {
-  string url = 1;
-  uint32 size = 2;
+message UploadResponse {
+  bool success = 1;
 }
+
+message file {
+  FileMetaData metaData = 1;
+  string fileUrl = 2;
+}
+
+message GetAllFilesRequest {
+  int64 id = 1;
+  FILE_TYPE type = 2; // If 0 then all files
+}
+
+message GetAllFilesResponse {
+  repeated file files = 3;
+}
+
 
 service UploadService {
-  rpc UploadProfileImage(stream UploadProfileImageRequest) returns (UploadImageResponse) {}
+  rpc UploadFile(stream UploadRequest) returns (UploadResponse);
+
+  // Will be used by admin or hr
+  rpc GetAllFiles(GetAllFilesRequest) returns (GetAllFilesResponse);
 }

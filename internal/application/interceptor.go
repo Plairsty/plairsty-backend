@@ -1,4 +1,4 @@
-package interceptors
+package model
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-func Unary() grpc.UnaryServerInterceptor {
+func (app *Application) Unary() grpc.UnaryServerInterceptor {
 	return func(
 		ctx context.Context,
 		req interface{},
@@ -14,11 +14,15 @@ func Unary() grpc.UnaryServerInterceptor {
 		handler grpc.UnaryHandler,
 	) (interface{}, error) {
 		log.Println("--> Unary Auth Interceptor", info.FullMethod)
+		err := app.Authorize(ctx, info.FullMethod)
+		if err != nil {
+			return nil, err
+		}
 		return handler(ctx, req)
 	}
 }
 
-func Stream() grpc.StreamServerInterceptor {
+func (app *Application) Stream() grpc.StreamServerInterceptor {
 	return func(
 		srv interface{},
 		stream grpc.ServerStream,
@@ -26,6 +30,10 @@ func Stream() grpc.StreamServerInterceptor {
 		handler grpc.StreamHandler,
 	) error {
 		log.Println("--> Stream Auth Interceptor", info.FullMethod)
+		err := app.Authorize(stream.Context(), info.FullMethod)
+		if err != nil {
+			return err
+		}
 		return handler(srv, stream)
 	}
 }

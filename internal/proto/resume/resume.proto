@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package resume;
+option go_package = "student/resumePb";
+// TODO: GET RPC
+message Resume {
+  bytes data = 2;
+}
+
+enum STATUS {
+  STATUS_UNSPECIFIED = 0;
+  STATUS_PENDING = 1;
+  STATUS_APPROVED = 2;
+  STATUS_REJECTED = 3;
+}
+
+message ResumeUploadRequest {
+  Resume resume = 1;
+  int64 id = 2;
+}
+
+message ResumeUploadResponse {
+  STATUS status = 1;
+  string url = 2;
+}
+
+message getResumeRequest {
+  int64 id = 1;
+}
+
+message getResumeResponse {
+  string url = 1;
+}
+
+message deleteResumeRequest {
+  int64 id = 1;
+}
+
+message deleteResumeResponse {
+  STATUS status = 1;
+}
+message UploadResumeUrlRequest {
+  int64 id = 1;
+  string url = 2;
+}
+
+message UploadResumeUrlResponse {
+  bool success = 1;
+}
+
+service ResumeService {
+  rpc UploadResume(stream ResumeUploadRequest) returns (ResumeUploadResponse);
+  rpc GetResume(getResumeRequest) returns (getResumeResponse);
+  rpc DeleteResume(deleteResumeRequest) returns (deleteResumeResponse);
+
+  rpc UploadResumeUrl(UploadResumeUrlRequest) returns (UploadResumeUrlResponse);
+}

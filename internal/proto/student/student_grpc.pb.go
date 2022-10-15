@@ -24,12 +24,14 @@ const _ = grpc.SupportPackageIsVersion7
 type StudentServiceClient interface {
 	// Any user can call this
 	GetStudent(ctx context.Context, in *GetStudentRequest, opts ...grpc.CallOption) (*GetStudentResponse, error)
-	// Only admin can call this to create a new student
 	CreateStudent(ctx context.Context, in *CreateStudentRequest, opts ...grpc.CallOption) (*CreateStudentResponse, error)
 	// Only admin can call this to delete a student
 	DeleteStudent(ctx context.Context, in *DeleteStudentRequest, opts ...grpc.CallOption) (*DeleteStudentResponse, error)
 	// Only student of his id can call this
 	UpdateStudent(ctx context.Context, in *UpdateStudentRequest, opts ...grpc.CallOption) (*UpdateStudentResponse, error)
+	IsProfileCompleted(ctx context.Context, in *IsProfileCompletedRequest, opts ...grpc.CallOption) (*IsProfileCompletedResponse, error)
+	GetGPA(ctx context.Context, in *GPARequest, opts ...grpc.CallOption) (*GPAResponse, error)
+	UpdateGPA(ctx context.Context, in *UpdateGPARequest, opts ...grpc.CallOption) (*UpdateGPAResponse, error)
 }
 
 type studentServiceClient struct {
@@ -76,18 +78,47 @@ func (c *studentServiceClient) UpdateStudent(ctx context.Context, in *UpdateStud
 	return out, nil
 }
 
+func (c *studentServiceClient) IsProfileCompleted(ctx context.Context, in *IsProfileCompletedRequest, opts ...grpc.CallOption) (*IsProfileCompletedResponse, error) {
+	out := new(IsProfileCompletedResponse)
+	err := c.cc.Invoke(ctx, "/student.StudentService/IsProfileCompleted", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *studentServiceClient) GetGPA(ctx context.Context, in *GPARequest, opts ...grpc.CallOption) (*GPAResponse, error) {
+	out := new(GPAResponse)
+	err := c.cc.Invoke(ctx, "/student.StudentService/GetGPA", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *studentServiceClient) UpdateGPA(ctx context.Context, in *UpdateGPARequest, opts ...grpc.CallOption) (*UpdateGPAResponse, error) {
+	out := new(UpdateGPAResponse)
+	err := c.cc.Invoke(ctx, "/student.StudentService/UpdateGPA", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StudentServiceServer is the server API for StudentService service.
 // All implementations must embed UnimplementedStudentServiceServer
 // for forward compatibility
 type StudentServiceServer interface {
 	// Any user can call this
 	GetStudent(context.Context, *GetStudentRequest) (*GetStudentResponse, error)
-	// Only admin can call this to create a new student
 	CreateStudent(context.Context, *CreateStudentRequest) (*CreateStudentResponse, error)
 	// Only admin can call this to delete a student
 	DeleteStudent(context.Context, *DeleteStudentRequest) (*DeleteStudentResponse, error)
 	// Only student of his id can call this
 	UpdateStudent(context.Context, *UpdateStudentRequest) (*UpdateStudentResponse, error)
+	IsProfileCompleted(context.Context, *IsProfileCompletedRequest) (*IsProfileCompletedResponse, error)
+	GetGPA(context.Context, *GPARequest) (*GPAResponse, error)
+	UpdateGPA(context.Context, *UpdateGPARequest) (*UpdateGPAResponse, error)
 	mustEmbedUnimplementedStudentServiceServer()
 }
 
@@ -106,6 +137,15 @@ func (UnimplementedStudentServiceServer) DeleteStudent(context.Context, *DeleteS
 }
 func (UnimplementedStudentServiceServer) UpdateStudent(context.Context, *UpdateStudentRequest) (*UpdateStudentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateStudent not implemented")
+}
+func (UnimplementedStudentServiceServer) IsProfileCompleted(context.Context, *IsProfileCompletedRequest) (*IsProfileCompletedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsProfileCompleted not implemented")
+}
+func (UnimplementedStudentServiceServer) GetGPA(context.Context, *GPARequest) (*GPAResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGPA not implemented")
+}
+func (UnimplementedStudentServiceServer) UpdateGPA(context.Context, *UpdateGPARequest) (*UpdateGPAResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateGPA not implemented")
 }
 func (UnimplementedStudentServiceServer) mustEmbedUnimplementedStudentServiceServer() {}
 
@@ -192,6 +232,60 @@ func _StudentService_UpdateStudent_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StudentService_IsProfileCompleted_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsProfileCompletedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StudentServiceServer).IsProfileCompleted(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/student.StudentService/IsProfileCompleted",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StudentServiceServer).IsProfileCompleted(ctx, req.(*IsProfileCompletedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StudentService_GetGPA_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GPARequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StudentServiceServer).GetGPA(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/student.StudentService/GetGPA",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StudentServiceServer).GetGPA(ctx, req.(*GPARequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StudentService_UpdateGPA_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateGPARequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StudentServiceServer).UpdateGPA(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/student.StudentService/UpdateGPA",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StudentServiceServer).UpdateGPA(ctx, req.(*UpdateGPARequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // StudentService_ServiceDesc is the grpc.ServiceDesc for StudentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -214,6 +308,18 @@ var StudentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateStudent",
 			Handler:    _StudentService_UpdateStudent_Handler,
+		},
+		{
+			MethodName: "IsProfileCompleted",
+			Handler:    _StudentService_IsProfileCompleted_Handler,
+		},
+		{
+			MethodName: "GetGPA",
+			Handler:    _StudentService_GetGPA_Handler,
+		},
+		{
+			MethodName: "UpdateGPA",
+			Handler:    _StudentService_UpdateGPA_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

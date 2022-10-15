@@ -1,0 +1,125 @@
+syntax = "proto3";
+
+package hr;
+option go_package = "hr/hrPb";
+import "google/protobuf/timestamp.proto";
+
+message hr {
+  string name = 1;
+  string phone = 2;
+  string email = 3;
+  string company = 4;
+  int64 id = 5;
+}
+
+message createHrRequest {
+  hr hr = 1;
+}
+
+message createHrResponse {
+  int64 id = 1;
+  bool success = 2;
+}
+
+message deleteHrRequest {
+  int64 id = 1;
+}
+
+message deleteHrResponse {
+  bool success = 1;
+}
+
+message getHrRequest {
+  int64 id = 2;
+}
+
+message getHrResponse {
+  repeated hr hr = 1;
+}
+
+// The hiring request, will contain the detail of hiring round.
+// Role for which hiring is being done.
+// Department for which hiring is being done.
+// Hiring manager for the hiring.
+// Required skills for the role.
+// Required experience for the role.
+// Required education for the role. cgpa, degree, college, year of passing.
+// Required certifications for the role.
+// Required location for the role.
+message job_fields {
+  int64 id = 1;
+  string role = 2;
+  string department = 3;
+  string skills = 4;
+  string experience = 5;
+  string required_cgpa = 6;
+  string description = 7;
+  string location = 8;
+  string certifications = 9;
+  string title = 10;
+  string company = 11;
+  int64 hr_id = 12;
+  google.protobuf.Timestamp timestamp = 13;
+}
+
+message createHiringRequest {
+  int64 hr_id = 1; // id of hiring manager.
+  job_fields job = 2;
+}
+
+message createHiringResponse {
+  bool success = 1;
+}
+
+message deleteHiringRequest {
+  int64 id = 1;
+}
+
+message deleteHiringResponse {
+  bool success = 1;
+}
+
+message getJobRequest {
+  int64 id = 1;
+  string title = 2;
+  string company = 3;
+  string location = 4;
+}
+
+message getJobResponse {
+  repeated job_fields job = 1;
+}
+
+message jobSearchQuery {
+  string title = 1;
+  string company = 2;
+  string location = 3;
+  int64 id = 5;
+}
+// If none is provided, then all the jobs will be returned.
+message getAllJobsRequest {}
+message getAllJobsResponse {
+  repeated job_fields jobs = 1;
+}
+
+message getJobById{
+  int64 id = 1;
+}
+
+message getJobByIdResponse {
+  job_fields job = 1;
+}
+
+
+service hrService {
+  rpc CreateHr(createHrRequest) returns (createHrResponse);
+  rpc DeleteHr(deleteHrRequest) returns (deleteHrResponse);
+  rpc GetHr (getHrRequest) returns (getHrResponse) {}
+  rpc CreateHiring (createHiringRequest) returns (createHiringResponse) {}
+  rpc DeleteHiring (deleteHiringRequest) returns (deleteHiringResponse) {}
+
+  // Shall be used by students.
+  rpc GetJob (getJobRequest) returns (getJobResponse) {}
+  rpc GetAllJobs (getAllJobsRequest) returns (getAllJobsResponse) {}
+  rpc GetJobById (getJobById) returns (getJobByIdResponse) {}
+}

@@ -1,0 +1,4 @@
+ALTER TABLE students
+    DROP CONSTRAINT students_pkey CASCADE;
+ALTER TABLE hr
+    DROP CONSTRAINT hr_pkey CASCADE;

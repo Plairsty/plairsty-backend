@@ -9,7 +9,7 @@ import (
 )
 
 func (app *Application) CreateStudent(
-	ctx context.Context,
+	_ context.Context,
 	in *studentPb.CreateStudentRequest,
 ) (*studentPb.CreateStudentResponse, error) {
 	if !utils.EmailValidator(in.Student.Email) {
@@ -26,25 +26,23 @@ func (app *Application) CreateStudent(
 }
 
 func (app *Application) GetStudent(
-	ctx context.Context,
+	_ context.Context,
 	in *studentPb.GetStudentRequest,
 ) (*studentPb.GetStudentResponse, error) {
-	var students []*studentPb.Student
-	dbRes, err := app.persistence.Student.Get(int64(in.Id))
+	dbRes, err := app.persistence.Student.Get(in.Id)
 	if err != nil {
 		return nil, err
 	}
-	students = append(students, dbRes)
 	return &studentPb.GetStudentResponse{
-		Student: students,
+		Student: dbRes,
 	}, nil
 }
 
 func (app *Application) UpdateStudent(
-	ctx context.Context,
+	_ context.Context,
 	in *studentPb.UpdateStudentRequest,
 ) (*studentPb.UpdateStudentResponse, error) {
-	_, err := app.persistence.Student.Get(int64(in.GetStudent().GetId()))
+	_, err := app.persistence.Student.Get(in.GetStudent().GetUsername())
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -60,5 +58,45 @@ func (app *Application) UpdateStudent(
 	return &studentPb.UpdateStudentResponse{
 		Success: true,
 		Message: "student updated",
+	}, nil
+}
+
+func (app *Application) IsProfileCompleted(
+	_ context.Context,
+	in *studentPb.IsProfileCompletedRequest,
+) (*studentPb.IsProfileCompletedResponse, error) {
+	dbRes, err := app.persistence.Student.CheckProfileStatus(in.GetId())
+	if err != nil {
+		return nil, err
+	}
+	return &studentPb.IsProfileCompletedResponse{
+		IsProfileCompleted: dbRes,
+	}, nil
+}
+
+func (app *Application) GetGPA(
+	_ context.Context,
+	in *studentPb.GPARequest,
+) (*studentPb.GPAResponse, error) {
+	dbRes, err := app.persistence.Student.GetGPA(in.GetId())
+	if err != nil {
+		return nil, err
+	}
+	return &studentPb.GPAResponse{
+		Gpa: dbRes,
+	}, nil
+}
+
+func (app *Application) UpdateGPA(
+	_ context.Context,
+	in *studentPb.UpdateGPARequest,
+) (*studentPb.UpdateGPAResponse, error) {
+	err := app.persistence.Student.UpdateGPA(in.GetId(), in.GetGpa())
+	if err != nil {
+		return nil, err
+	}
+	return &studentPb.UpdateGPAResponse{
+		Success: true,
+		Message: "gpa updated",
 	}, nil
 }

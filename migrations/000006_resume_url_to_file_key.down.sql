@@ -1,0 +1,3 @@
+ALTER TABLE resume ADD COLUMN resume_url VARCHAR(255) NOT NULL DEFAULT '';
+
+ALTER TABLE resume DROP COLUMN file_key;
