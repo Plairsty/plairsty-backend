@@ -54,6 +54,7 @@ func (r ResumeRepository) Insert(resume *resumePb.Resume, id int) error {
 			DO UPDATE SET resume_url = $2`
 	_, err = r.DB.Exec(query, id, res.Location)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 	return nil
@@ -66,6 +67,7 @@ func (r ResumeRepository) Get(id int64) (string, error) {
 	query := `SELECT resume_url FROM resume WHERE student_id=$1`
 	err := r.DB.QueryRow(query, id).Scan(&resumeUrl)
 	if err != nil {
+		log.Println(err)
 		return "", err
 	}
 	return resumeUrl, nil
@@ -79,6 +81,7 @@ func (r ResumeRepository) InsertUrl(url string, id int) error {
     		DO UPDATE SET resume_url = $2`
 	_, err := r.DB.Exec(query, id, url)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 	return nil
@@ -107,6 +110,7 @@ func (r ResumeRepository) Delete(id int64) error {
 	query := `DELETE FROM resume WHERE student_id=$1`
 	_, err = r.DB.Exec(query, id)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 	return nil
