@@ -12,7 +12,6 @@ message Internship_fields {
   string company = 5;
   google.protobuf.Timestamp start_date = 6;
   google.protobuf.Timestamp end_date = 7;
-  string status = 8;
   string mentor_name = 10;
 }
 

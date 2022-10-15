@@ -5,6 +5,7 @@ import (
 	authPb "awesomeProject/internal/proto/auth"
 	certificatePb "awesomeProject/internal/proto/certificates"
 	hrPb "awesomeProject/internal/proto/hr"
+	internshipPb "awesomeProject/internal/proto/internship"
 	resumePb "awesomeProject/internal/proto/resume"
 	studentPb "awesomeProject/internal/proto/student"
 	"database/sql"
@@ -71,6 +72,14 @@ type Repositories struct {
 		Delete(userId, certId int64) error
 		ChangeStatus(id int64, status certificatePb.STATUS) error
 	}
+
+	Internship interface {
+		Insert(userId int64, internship *internshipPb.InternshipFields) error
+		Get(userId, internshipId int64) (*internshipPb.InternshipFields, error)
+		GetAll(userId int64) ([]*internshipPb.InternshipFields, error)
+		Update(userId int64, internship *internshipPb.InternshipFields) error // Internship id in field
+		Delete(userId, internshipId int64) error
+	}
 }
 
 func NewRepositories(db *sql.DB, s3 *S3) *Repositories {
@@ -82,5 +91,6 @@ func NewRepositories(db *sql.DB, s3 *S3) *Repositories {
 		Job:            jobRepository{DB: db},
 		JobApplication: JobApplicationRepository{DB: db},
 		Certificate:    CertificateRepository{DB: db, S3: s3},
+		Internship:     InternshipRepository{DB: db},
 	}
 }
