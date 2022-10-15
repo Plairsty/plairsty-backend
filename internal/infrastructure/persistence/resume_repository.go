@@ -2,11 +2,11 @@ package persistence
 
 import (
 	resumePb "awesomeProject/internal/proto/resume"
+	"awesomeProject/utils"
 	"bytes"
 	"database/sql"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
@@ -26,15 +26,7 @@ type ResumeRepository struct {
 func (r ResumeRepository) Insert(resume *resumePb.Resume, id int) error {
 	file := resume.Data
 	f := bytes.NewReader(file)
-	cred := credentials.NewStaticCredentials(
-		r.S3.ApiId, r.S3.ApiToken, "",
-	)
-	s3session := session.Must(session.NewSession(
-		&aws.Config{
-			Region:      aws.String(r.S3.Region),
-			Credentials: cred,
-		}))
-	uploader := s3manager.NewUploader(s3session)
+	uploader := utils.S3Uploader(r.S3.ApiId, r.S3.ApiToken, r.S3.Region)
 	key := fmt.Sprintf("%s%d.pdf", r.S3.Key, id)
 	res, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(r.S3.Bucket),

@@ -3,6 +3,7 @@ package persistence
 import (
 	jobApplicationPb "awesomeProject/internal/proto/application"
 	authPb "awesomeProject/internal/proto/auth"
+	certificatePb "awesomeProject/internal/proto/certificates"
 	hrPb "awesomeProject/internal/proto/hr"
 	resumePb "awesomeProject/internal/proto/resume"
 	studentPb "awesomeProject/internal/proto/student"
@@ -15,11 +16,11 @@ type Repositories struct {
 		GetByUsername(username string) (*authPb.UserFields, error)
 		DeleteByUsername(username string) error
 
-		// Functions solely for auth
+		// Get Functions solely for auth
 		Get(username string) (hashedPassword, role string, err error)
 	}
 	Student interface {
-		// Please note that, id means here I'm refering to moodle id
+		// Insert Please note that, id means here I'm refering to moodle id
 		Insert(student *studentPb.Student) error
 		Get(id string) (*studentPb.Student, error)
 		Update(student *studentPb.Student) error
@@ -56,6 +57,20 @@ type Repositories struct {
 		Get(applicationId int) (bool, error)
 		GetAll(userId int) ([]*jobApplicationPb.AllJobApplicationStatus, error)
 	}
+
+	Certificate interface {
+		Insert(userId int64,
+			certificateData *certificatePb.CertificateData,
+			certificate *certificatePb.CertificateFields) (int64, error)
+		// Get certificate by certificate id
+		Get(id int64) (*certificatePb.CertificateFields, error)
+		// GetAll certificate by student id
+		GetAll(id int64) ([]*certificatePb.CertificateFields, error)
+		// Update Certificate id, and certificate fields
+		Update(userId, certId int64, certificate *certificatePb.CertificateFields) error
+		Delete(userId, certId int64) error
+		ChangeStatus(id int64, status certificatePb.STATUS) error
+	}
 }
 
 func NewRepositories(db *sql.DB, s3 *S3) *Repositories {
@@ -66,5 +81,6 @@ func NewRepositories(db *sql.DB, s3 *S3) *Repositories {
 		Hr:             hrRepository{DB: db},
 		Job:            jobRepository{DB: db},
 		JobApplication: JobApplicationRepository{DB: db},
+		Certificate:    CertificateRepository{DB: db, S3: s3},
 	}
 }

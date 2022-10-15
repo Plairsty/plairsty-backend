@@ -10,13 +10,15 @@ enum STATUS {
   REJECTED = 2;
   FAILED = 3;
 }
-
+message certificate_data {
+  bytes data = 1;
+}
 message certificate_fields {
   // All detail about the certificate
   string title = 1;
   string description = 2;
   string certificate_id = 3;
-  bytes certificate_file = 4;
+  string certificate_file_url = 4;
   google.protobuf.Timestamp allocated_date = 5;
   string allocated_by = 6;
   google.protobuf.Timestamp expiry_date = 7;
@@ -25,11 +27,13 @@ message certificate_fields {
   string certificate_category = 10; // eg. "academic", "professional", "personal"
   string certificate_issuer = 11;
   string domain = 12;
+  int64 id = 13;
 }
 
 message AddCertificateRequest {
   int64 user_id = 1;
-  certificate_fields certificate = 2;
+  certificate_data data = 2;
+  certificate_fields certificate = 3;
 }
 
 message AddCertificateResponse {
