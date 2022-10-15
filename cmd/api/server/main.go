@@ -6,6 +6,7 @@ import (
 	"awesomeProject/internal/infrastructure/service"
 	jobApplicationPb "awesomeProject/internal/proto/application"
 	authPb "awesomeProject/internal/proto/auth"
+	certificatePb "awesomeProject/internal/proto/certificates"
 	sys "awesomeProject/internal/proto/health"
 	hrPb "awesomeProject/internal/proto/hr"
 	resumePb "awesomeProject/internal/proto/resume"
@@ -118,6 +119,7 @@ func main() {
 	resumePb.RegisterResumeServiceServer(server, app)
 	hrPb.RegisterHrServiceServer(server, app)
 	jobApplicationPb.RegisterJobApplicationServiceServer(server, app)
+	certificatePb.RegisterCertificateServiceServer(server, app)
 
 	// register reflection service on gRPC server.
 	reflection.Register(server)

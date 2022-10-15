@@ -10,6 +10,7 @@ enum STATUS {
   REJECTED = 2;
   FAILED = 3;
 }
+
 message certificate_data {
   bytes data = 1;
 }
@@ -22,7 +23,7 @@ message certificate_fields {
   google.protobuf.Timestamp allocated_date = 5;
   string allocated_by = 6;
   google.protobuf.Timestamp expiry_date = 7;
-  string certificate_type = 8; // eg. "certificate", "diploma", "degree"
+  string certificate_type = 8; // eg. "certificate", "diploma", "degree" // A dropdown list of certificate types
   string certificate_level = 9; // eg. "basic", "intermediate", "advanced"
   string certificate_category = 10; // eg. "academic", "professional", "personal"
   string certificate_issuer = 11;
@@ -61,7 +62,8 @@ message GetCertificateResponse {
 
 message UpdateCertificateRequest {
   int64 certificate_id = 1;
-  certificate_fields certificate = 2;
+  int64 user_id = 2;
+  certificate_fields certificate = 3;
 }
 
 message UpdateCertificateResponse {
@@ -70,6 +72,7 @@ message UpdateCertificateResponse {
 
 message DeleteCertificateRequest {
   int64 certificate_id = 1;
+  int64 user_id = 2;
 }
 
 message DeleteCertificateResponse {
