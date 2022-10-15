@@ -16,7 +16,7 @@ type studentRepository struct {
 func (r studentRepository) Insert(student *studentPb.Student) error {
 	query := `
 		INSERT INTO students (first_name, middle_name, last_name, email, moodle, status, image_url)
-		VALUES ($1, $2, $3, $4, $5, $6)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING id, created_at`
 	args := []interface{}{
 		strings.Trim(student.FirstName, " "),
