@@ -48,10 +48,10 @@ func (r ResumeRepository) Insert(resume *resumePb.Resume, id int) error {
 	}
 	// Insert the resume into db, overwrite if already exists
 	query := `
-			INSERT INTO resume (student_id, resume_url)
+			INSERT INTO resume (student_id, file_key)
 			VALUES ($1, $2)
 			ON CONFLICT (student_id)
-			DO UPDATE SET resume_url = $2`
+			DO UPDATE SET file_key = $2`
 	_, err = r.DB.Exec(query, id, res.Location)
 	if err != nil {
 		log.Println(err)
@@ -64,7 +64,7 @@ func (r ResumeRepository) Insert(resume *resumePb.Resume, id int) error {
 // here id is student id
 func (r ResumeRepository) Get(id int64) (string, error) {
 	var resumeUrl string
-	query := `SELECT resume_url FROM resume WHERE student_id=$1`
+	query := `SELECT file_key FROM resume WHERE student_id=$1`
 	err := r.DB.QueryRow(query, id).Scan(&resumeUrl)
 	if err != nil {
 		log.Println(err)
@@ -75,10 +75,10 @@ func (r ResumeRepository) Get(id int64) (string, error) {
 
 func (r ResumeRepository) InsertUrl(url string, id int) error {
 	query := `
-			INSERT INTO resume (student_id, resume_url) 
+			INSERT INTO resume (student_id, file_key) 
 			VALUES ($1, $2) 
 			ON CONFLICT (student_id) 
-    		DO UPDATE SET resume_url = $2`
+    		DO UPDATE SET file_key = $2`
 	_, err := r.DB.Exec(query, id, url)
 	if err != nil {
 		log.Println(err)
