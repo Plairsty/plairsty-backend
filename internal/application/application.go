@@ -9,6 +9,7 @@ import (
 	sys "awesomeProject/internal/proto/health"
 	hrPb "awesomeProject/internal/proto/hr"
 	internshipPb "awesomeProject/internal/proto/internship"
+	projectPb "awesomeProject/internal/proto/project"
 	resumePb "awesomeProject/internal/proto/resume"
 	studentPb "awesomeProject/internal/proto/student"
 	"database/sql"
@@ -41,6 +42,7 @@ type Application struct {
 	jobApplicationPb.UnimplementedJobApplicationServiceServer
 	certificatePb.UnimplementedCertificateServiceServer
 	internshipPb.UnimplementedInternshipServiceServer
+	projectPb.UnimplementedProjectServiceServer
 }
 
 func NewApplication(

@@ -6,6 +6,7 @@ import (
 	certificatePb "awesomeProject/internal/proto/certificates"
 	hrPb "awesomeProject/internal/proto/hr"
 	internshipPb "awesomeProject/internal/proto/internship"
+	projectPb "awesomeProject/internal/proto/project"
 	resumePb "awesomeProject/internal/proto/resume"
 	studentPb "awesomeProject/internal/proto/student"
 	"database/sql"
@@ -80,6 +81,15 @@ type Repositories struct {
 		Update(userId int64, internship *internshipPb.InternshipFields) error // Internship id in field
 		Delete(userId, internshipId int64) error
 	}
+
+	Project interface {
+		Insert(userId int64, project *projectPb.ProjectFields) error
+		Get(userId, projectId int64) (*projectPb.ProjectFields, error)
+		GetAll(userId int64) ([]*projectPb.ProjectFields, error)
+		Update(userId int64, project *projectPb.ProjectFields) error // Project id in field
+		Delete(userId, projectId int64) error
+		GetProjectsBySemester(userId, semester int64) ([]*projectPb.ProjectFields, error)
+	}
 }
 
 func NewRepositories(db *sql.DB, s3 *S3) *Repositories {
@@ -92,5 +102,6 @@ func NewRepositories(db *sql.DB, s3 *S3) *Repositories {
 		JobApplication: JobApplicationRepository{DB: db},
 		Certificate:    CertificateRepository{DB: db, S3: s3},
 		Internship:     InternshipRepository{DB: db},
+		Project:        ProjectRepository{DB: db},
 	}
 }

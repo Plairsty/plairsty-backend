@@ -11,8 +11,8 @@ enum STATUS {
   STATUS_FAILED = 3;
 }
 
-message Project {
-  string id = 1;
+message Project_fields {
+  int64 id = 1;
   string name = 2;
   string description = 3; // Your contribution
   string leader = 4;
@@ -26,7 +26,7 @@ message Project {
 
 message AddProjectRequest {
   int64 user_id = 1;
-  Project project = 2;
+  Project_fields project = 2;
 }
 
 message AddProjectResponse {
@@ -35,11 +35,11 @@ message AddProjectResponse {
 
 message GetProjectRequest {
   int64 user_id = 1;
-  string project_id = 2;
+  int64 project_id = 2;
 }
 
 message GetProjectResponse {
-  Project project = 2;
+  Project_fields project = 2;
 }
 
 message GetProjectsRequest {
@@ -47,12 +47,12 @@ message GetProjectsRequest {
 }
 
 message GetProjectsResponse {
-  repeated Project projects = 1;
+  repeated Project_fields projects = 1;
 }
 
 message UpdateProjectRequest {
   int64 user_id = 1;
-  Project project = 2;
+  Project_fields project = 2;
 }
 
 message UpdateProjectResponse {
@@ -61,7 +61,7 @@ message UpdateProjectResponse {
 
 message DeleteProjectRequest {
   int64 user_id = 1;
-  string project_id = 2;
+  int64 project_id = 2;
 }
 
 message DeleteProjectResponse {
@@ -74,7 +74,7 @@ message GetProjectsBySemesterRequest {
 }
 
 message GetProjectsBySemesterResponse {
-  repeated Project projects = 1;
+  repeated Project_fields projects = 1;
 }
 
 service ProjectService {
