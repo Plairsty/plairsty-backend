@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"github.com/lib/pq"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"log"
 	"time"
 )
 
@@ -22,14 +21,11 @@ func (p ProjectRepository) Insert(username string, project *projectPb.ProjectFie
 	var endDate time.Time
 	if project.GetStartDate() != nil {
 		startDate = project.GetStartDate().AsTime()
-		log.Println("Start time: ", project.StartDate.Seconds)
 		startDate = startDate.Add(time.Duration(project.StartDate.Seconds))
-		log.Println(startDate)
 	}
 	if project.GetEndDate() != nil {
 		endDate = project.GetEndDate().AsTime()
 		endDate = endDate.Add(time.Duration(project.GetEndDate().GetSeconds()))
-		log.Println(endDate)
 	}
 	_, err := p.DB.Exec(
 		query,
@@ -44,8 +40,6 @@ func (p ProjectRepository) Insert(username string, project *projectPb.ProjectFie
 		startDate,
 		endDate,
 	)
-
-	log.Println(err)
 	return err
 }
 
@@ -69,11 +63,18 @@ func (p ProjectRepository) Get(username string, projectId int64) (*projectPb.Pro
 		&startDate,
 		&endDate,
 	)
-	project.StartDate = &timestamppb.Timestamp{
-		Nanos: int32(startDate.Nanosecond()),
-	}
-	project.EndDate = &timestamppb.Timestamp{
-		Nanos: int32(endDate.Nanosecond()),
+	if startDate.IsZero() {
+		project.StartDate = nil
+	} else {
+		project.StartDate = &timestamppb.Timestamp{
+			Seconds: startDate.Unix(),
+			Nanos:   int32(startDate.Nanosecond()),
+		}
+
+		project.EndDate = &timestamppb.Timestamp{
+			Seconds: endDate.Unix(),
+			Nanos:   int32(endDate.Nanosecond()),
+		}
 	}
 	return &project, err
 }
@@ -127,7 +128,6 @@ func (p ProjectRepository) GetAll(username string) ([]*projectPb.ProjectFields, 
 				Seconds: endDate.Unix(),
 				Nanos:   int32(endDate.Nanosecond()),
 			}
-			log.Println(project.EndDate.Seconds)
 		}
 		projects = append(projects, &project)
 	}
@@ -140,6 +140,16 @@ func (p ProjectRepository) Update(username string, project *projectPb.ProjectFie
 			SET title = $1, description = $2, leader = $3, member_ids = $4, guide_name = $5, project_url = $6, semester = $7, start_date = $8, end_date = $9
 			WHERE id = $10 AND username = $11
 			`
+	var startDate time.Time
+	var endDate time.Time
+	if project.GetStartDate() != nil {
+		startDate = project.GetStartDate().AsTime()
+		startDate = startDate.Add(time.Duration(project.StartDate.Seconds))
+	}
+	if project.GetEndDate() != nil {
+		endDate = project.GetEndDate().AsTime()
+		endDate = endDate.Add(time.Duration(project.GetEndDate().GetSeconds()))
+	}
 	_, err := p.DB.Exec(
 		query,
 		project.GetName(),
@@ -149,8 +159,8 @@ func (p ProjectRepository) Update(username string, project *projectPb.ProjectFie
 		project.GetGuideName(),
 		project.GetProjectUrl(),
 		project.GetSemester(),
-		project.GetStartDate().AsTime(),
-		project.GetEndDate().AsTime(),
+		startDate,
+		endDate,
 		project.GetId(),
 		username,
 	)
@@ -199,11 +209,18 @@ func (p ProjectRepository) GetProjectsBySemester(username string, semester int64
 			&startDate,
 			&endDate,
 		)
-		project.StartDate = &timestamppb.Timestamp{
-			Nanos: int32(startDate.Nanosecond()),
-		}
-		project.EndDate = &timestamppb.Timestamp{
-			Nanos: int32(endDate.Nanosecond()),
+		if startDate.IsZero() {
+			project.StartDate = nil
+		} else {
+			project.StartDate = &timestamppb.Timestamp{
+				Seconds: startDate.Unix(),
+				Nanos:   int32(startDate.Nanosecond()),
+			}
+
+			project.EndDate = &timestamppb.Timestamp{
+				Seconds: endDate.Unix(),
+				Nanos:   int32(endDate.Nanosecond()),
+			}
 		}
 		if err != nil {
 			return nil, err
