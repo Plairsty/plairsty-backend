@@ -22,10 +22,12 @@ func (p ProjectRepository) Insert(username string, project *projectPb.ProjectFie
 	if project.GetStartDate() != nil {
 		startDate = project.GetStartDate().AsTime()
 		startDate = startDate.Add(time.Duration(project.StartDate.Seconds))
+		startDate = startDate.AddDate(0, 0, 1)
 	}
 	if project.GetEndDate() != nil {
 		endDate = project.GetEndDate().AsTime()
 		endDate = endDate.Add(time.Duration(project.GetEndDate().GetSeconds()))
+		endDate = endDate.AddDate(0, 0, 1)
 	}
 	_, err := p.DB.Exec(
 		query,
@@ -145,10 +147,12 @@ func (p ProjectRepository) Update(username string, project *projectPb.ProjectFie
 	if project.GetStartDate() != nil {
 		startDate = project.GetStartDate().AsTime()
 		startDate = startDate.Add(time.Duration(project.StartDate.Seconds))
+		startDate = startDate.AddDate(0, 0, 1)
 	}
 	if project.GetEndDate() != nil {
 		endDate = project.GetEndDate().AsTime()
 		endDate = endDate.Add(time.Duration(project.GetEndDate().GetSeconds()))
+		endDate = endDate.AddDate(0, 0, 1)
 	}
 	_, err := p.DB.Exec(
 		query,
