@@ -83,12 +83,12 @@ type Repositories struct {
 	}
 
 	Project interface {
-		Insert(userId int64, project *projectPb.ProjectFields) error
-		Get(userId, projectId int64) (*projectPb.ProjectFields, error)
-		GetAll(userId int64) ([]*projectPb.ProjectFields, error)
-		Update(userId int64, project *projectPb.ProjectFields) error // Project id in field
-		Delete(userId, projectId int64) error
-		GetProjectsBySemester(userId, semester int64) ([]*projectPb.ProjectFields, error)
+		Insert(username string, project *projectPb.ProjectFields) error
+		Get(username string, projectId int64) (*projectPb.ProjectFields, error)
+		GetAll(username string) ([]*projectPb.ProjectFields, error)
+		Update(username string, project *projectPb.ProjectFields) error // Project id in field
+		Delete(username string, projectId int64) error
+		GetProjectsBySemester(username string, semester int64) ([]*projectPb.ProjectFields, error)
 	}
 }
 

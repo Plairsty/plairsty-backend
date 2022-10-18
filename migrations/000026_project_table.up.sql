@@ -13,4 +13,7 @@ CREATE TABLE IF NOT EXISTS projects
     end_date    date         NOT NULL,
     created_at  timestamp    NOT NULL DEFAULT NOW(),
     updated_at  timestamp    NOT NULL DEFAULT NOW()
-)
+);
+
+ALTER TABLE projects DROP COLUMN IF EXISTS user_id;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS username varchar(255) REFERENCES "user"(username) ON DELETE CASCADE;

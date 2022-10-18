@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+	"log"
 	"strings"
 )
 
@@ -47,10 +48,13 @@ func (app *Application) Login(
 	if err != nil {
 		return nil, errors.New("invalid password")
 	}
-	token, err := app.jwtManager.GenerateToken(req.GetUsername(), role)
+	// Remove whitespace from username
+	username := strings.Trim(req.GetUsername(), " ")
+	token, err := app.jwtManager.GenerateToken(username, role)
 	if err != nil {
 		return nil, err
 	}
+	log.Println("User logged in")
 	return &authPb.LoginResponse{
 		AccessToken: token,
 	}, nil

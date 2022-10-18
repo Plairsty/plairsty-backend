@@ -3,41 +3,62 @@ package persistence
 import (
 	projectPb "awesomeProject/internal/proto/project"
 	"database/sql"
+	"github.com/lib/pq"
+	"google.golang.org/protobuf/types/known/timestamppb"
+	"log"
+	"time"
 )
 
 type ProjectRepository struct {
 	DB *sql.DB
 }
 
-func (p ProjectRepository) Insert(userId int64, project *projectPb.ProjectFields) error {
+func (p ProjectRepository) Insert(username string, project *projectPb.ProjectFields) error {
 	query := `
-			INSERT INTO projects (user_id, title, description, leader, member_ids, guide_name, project_url, semester, start_date, end_date)
+			INSERT INTO projects (username, title, description, leader, member_ids, guide_name, project_url, semester, start_date, end_date)
 			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 			`
+	var startDate time.Time
+	var endDate time.Time
+	if project.GetStartDate() != nil {
+		startDate = project.GetStartDate().AsTime()
+		log.Println("Start time: ", project.StartDate.Seconds)
+		startDate = startDate.Add(time.Duration(project.StartDate.Seconds))
+		log.Println(startDate)
+	}
+	if project.GetEndDate() != nil {
+		endDate = project.GetEndDate().AsTime()
+		endDate = endDate.Add(time.Duration(project.GetEndDate().GetSeconds()))
+		log.Println(endDate)
+	}
 	_, err := p.DB.Exec(
 		query,
-		userId,
+		username,
 		project.GetName(),
 		project.GetDescription(),
 		project.GetLeader(),
-		project.GetMembersUsername(),
+		pq.Array(project.GetMembersUsername()),
 		project.GetGuideName(),
 		project.GetProjectUrl(),
 		project.GetSemester(),
-		project.GetStartDate(),
-		project.GetEndDate(),
+		startDate,
+		endDate,
 	)
+
+	log.Println(err)
 	return err
 }
 
-func (p ProjectRepository) Get(userId, projectId int64) (*projectPb.ProjectFields, error) {
+func (p ProjectRepository) Get(username string, projectId int64) (*projectPb.ProjectFields, error) {
 	query := `
 			SELECT title, description, leader, member_ids, guide_name, project_url, semester, start_date, end_date
 			FROM projects
-			WHERE id = $1 AND user_id = $2
+			WHERE id = $1 AND username = $2
 			`
 	var project projectPb.ProjectFields
-	err := p.DB.QueryRow(query, projectId, userId).Scan(
+	var startDate time.Time
+	var endDate time.Time
+	err := p.DB.QueryRow(query, projectId, username).Scan(
 		&project.Name,
 		&project.Description,
 		&project.Leader,
@@ -45,19 +66,25 @@ func (p ProjectRepository) Get(userId, projectId int64) (*projectPb.ProjectField
 		&project.GuideName,
 		&project.ProjectUrl,
 		&project.Semester,
-		&project.StartDate,
-		&project.EndDate,
+		&startDate,
+		&endDate,
 	)
+	project.StartDate = &timestamppb.Timestamp{
+		Nanos: int32(startDate.Nanosecond()),
+	}
+	project.EndDate = &timestamppb.Timestamp{
+		Nanos: int32(endDate.Nanosecond()),
+	}
 	return &project, err
 }
 
-func (p ProjectRepository) GetAll(userId int64) ([]*projectPb.ProjectFields, error) {
+func (p ProjectRepository) GetAll(username string) ([]*projectPb.ProjectFields, error) {
 	query := `
 			SELECT id, title, description, leader, member_ids, guide_name, project_url, semester, start_date, end_date
 			FROM projects
-			WHERE user_id = $1
+			WHERE username = $1
 			`
-	rows, err := p.DB.Query(query, userId)
+	rows, err := p.DB.Query(query, username)
 	if err != nil {
 		return nil, err
 	}
@@ -70,65 +97,82 @@ func (p ProjectRepository) GetAll(userId int64) ([]*projectPb.ProjectFields, err
 	var projects []*projectPb.ProjectFields
 	for rows.Next() {
 		var project projectPb.ProjectFields
+		var startDate time.Time
+		var endDate time.Time
 		err := rows.Scan(
 			&project.Id,
 			&project.Name,
 			&project.Description,
 			&project.Leader,
-			&project.MembersUsername,
+			pq.Array(&project.MembersUsername),
 			&project.GuideName,
 			&project.ProjectUrl,
 			&project.Semester,
-			&project.StartDate,
-			&project.EndDate,
+			&startDate,
+			&endDate,
 		)
+
 		if err != nil {
 			return nil, err
+		}
+		if startDate.IsZero() {
+			project.StartDate = nil
+		} else {
+			project.StartDate = &timestamppb.Timestamp{
+				Seconds: startDate.Unix(),
+				Nanos:   int32(startDate.Nanosecond()),
+			}
+
+			project.EndDate = &timestamppb.Timestamp{
+				Seconds: endDate.Unix(),
+				Nanos:   int32(endDate.Nanosecond()),
+			}
+			log.Println(project.EndDate.Seconds)
 		}
 		projects = append(projects, &project)
 	}
 	return projects, nil
 }
 
-func (p ProjectRepository) Update(userId int64, project *projectPb.ProjectFields) error {
+func (p ProjectRepository) Update(username string, project *projectPb.ProjectFields) error {
 	query := `
 			UPDATE projects
 			SET title = $1, description = $2, leader = $3, member_ids = $4, guide_name = $5, project_url = $6, semester = $7, start_date = $8, end_date = $9
-			WHERE id = $10 AND user_id = $11
+			WHERE id = $10 AND username = $11
 			`
 	_, err := p.DB.Exec(
 		query,
 		project.GetName(),
 		project.GetDescription(),
 		project.GetLeader(),
-		project.GetMembersUsername(),
+		pq.Array(project.GetMembersUsername()),
 		project.GetGuideName(),
 		project.GetProjectUrl(),
 		project.GetSemester(),
-		project.GetStartDate(),
-		project.GetEndDate(),
+		project.GetStartDate().AsTime(),
+		project.GetEndDate().AsTime(),
 		project.GetId(),
-		userId,
+		username,
 	)
 	return err
 }
 
-func (p ProjectRepository) Delete(userId, projectId int64) error {
+func (p ProjectRepository) Delete(username string, projectId int64) error {
 	query := `
 			DELETE FROM projects
-			WHERE id = $1 AND user_id = $2
+			WHERE id = $1 AND username = $2
 			`
-	_, err := p.DB.Exec(query, projectId, userId)
+	_, err := p.DB.Exec(query, projectId, username)
 	return err
 }
 
-func (p ProjectRepository) GetProjectsBySemester(userId, semester int64) ([]*projectPb.ProjectFields, error) {
+func (p ProjectRepository) GetProjectsBySemester(username string, semester int64) ([]*projectPb.ProjectFields, error) {
 	query := `
 			SELECT id, title, description, leader, member_ids, guide_name, project_url, semester, start_date, end_date
 			FROM projects
-			WHERE user_id = $1 AND semester = $2
+			WHERE username = $1 AND semester = $2
 			`
-	rows, err := p.DB.Query(query, userId, semester)
+	rows, err := p.DB.Query(query, username, semester)
 	if err != nil {
 		return nil, err
 	}
@@ -141,6 +185,8 @@ func (p ProjectRepository) GetProjectsBySemester(userId, semester int64) ([]*pro
 	var projects []*projectPb.ProjectFields
 	for rows.Next() {
 		var project projectPb.ProjectFields
+		var startDate time.Time
+		var endDate time.Time
 		err := rows.Scan(
 			&project.Id,
 			&project.Name,
@@ -150,9 +196,15 @@ func (p ProjectRepository) GetProjectsBySemester(userId, semester int64) ([]*pro
 			&project.GuideName,
 			&project.ProjectUrl,
 			&project.Semester,
-			&project.StartDate,
-			&project.EndDate,
+			&startDate,
+			&endDate,
 		)
+		project.StartDate = &timestamppb.Timestamp{
+			Nanos: int32(startDate.Nanosecond()),
+		}
+		project.EndDate = &timestamppb.Timestamp{
+			Nanos: int32(endDate.Nanosecond()),
+		}
 		if err != nil {
 			return nil, err
 		}

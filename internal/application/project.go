@@ -6,7 +6,7 @@ import (
 )
 
 func (app *Application) AddProject(_ context.Context, req *projectPb.AddProjectRequest) (*projectPb.AddProjectResponse, error) {
-	userId := req.GetUserId()
+	userId := req.GetUsername()
 	project := req.GetProject()
 	err := app.persistence.Project.Insert(userId, project)
 	if err != nil {
@@ -18,7 +18,7 @@ func (app *Application) AddProject(_ context.Context, req *projectPb.AddProjectR
 }
 
 func (app *Application) GetProject(_ context.Context, req *projectPb.GetProjectRequest) (*projectPb.GetProjectResponse, error) {
-	userId := req.GetUserId()
+	userId := req.GetUsername()
 	projectId := req.GetProjectId()
 	project, err := app.persistence.Project.Get(userId, projectId)
 	if err != nil {
@@ -30,7 +30,7 @@ func (app *Application) GetProject(_ context.Context, req *projectPb.GetProjectR
 }
 
 func (app *Application) GetProjects(_ context.Context, req *projectPb.GetProjectsRequest) (*projectPb.GetProjectsResponse, error) {
-	userId := req.GetUserId()
+	userId := req.GetUsername()
 	projects, err := app.persistence.Project.GetAll(userId)
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (app *Application) GetProjects(_ context.Context, req *projectPb.GetProject
 }
 
 func (app *Application) UpdateProject(_ context.Context, req *projectPb.UpdateProjectRequest) (*projectPb.UpdateProjectResponse, error) {
-	userId := req.GetUserId()
+	userId := req.GetUsername()
 	project := req.GetProject()
 	err := app.persistence.Project.Update(userId, project)
 	if err != nil {
@@ -53,7 +53,7 @@ func (app *Application) UpdateProject(_ context.Context, req *projectPb.UpdatePr
 }
 
 func (app *Application) DeleteProject(_ context.Context, req *projectPb.DeleteProjectRequest) (*projectPb.DeleteProjectResponse, error) {
-	userId := req.GetUserId()
+	userId := req.GetUsername()
 	projectId := req.GetProjectId()
 	err := app.persistence.Project.Delete(userId, projectId)
 	if err != nil {
@@ -65,7 +65,7 @@ func (app *Application) DeleteProject(_ context.Context, req *projectPb.DeletePr
 }
 
 func (app *Application) GetProjectsBySemester(_ context.Context, req *projectPb.GetProjectsBySemesterRequest) (*projectPb.GetProjectsBySemesterResponse, error) {
-	userId := req.GetUserId()
+	userId := req.GetUsername()
 	semester := req.GetSemester()
 	projects, err := app.persistence.Project.GetProjectsBySemester(userId, semester)
 	if err != nil {
