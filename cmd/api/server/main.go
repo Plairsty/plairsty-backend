@@ -74,7 +74,6 @@ func main() {
 		ApiId:    os.Getenv("AWS_ACCESS_KEY_ID"),
 		ApiToken: os.Getenv("AWS_SECRET_ACCESS_KEY"),
 	}
-	log.Println("API ID: ", os.Getenv("AWS_SECRET_ACCESS_KEY"))
 	jwtManager := service.NewJwtManager(
 		os.Getenv("PLAIRSTY_JWT_SECRET"),
 		os.Getenv("PLAIRSTY_JWT_ISSUER"),
