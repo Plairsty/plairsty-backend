@@ -116,6 +116,26 @@ message GPAResponse {
   Gpa gpa = 1;
 }
 
+message AddGPARequest {
+  string id = 1;
+  Gpa gpa = 2;
+  bytes data = 3; // image data or pdf
+}
+
+message AddGPAResponse {
+  bool success = 1;
+}
+
+message UpdateGPARequestWithImage {
+  string id = 1;
+  Gpa gpa = 2;
+  bytes data = 3; // image data or pdf
+}
+
+message UpdateGPAResponseWithImage {
+  bool success = 1;
+}
+
 // Update GPA
 message UpdateGPARequest {
   string id = 1;
@@ -152,4 +172,7 @@ service StudentService {
   rpc IsProfileCompleted(IsProfileCompletedRequest) returns (IsProfileCompletedResponse);
   rpc GetGPA(GPARequest) returns (GPAResponse);
   rpc UpdateGPA(UpdateGPARequest) returns (UpdateGPAResponse);
+
+  rpc UpdateGPAWithImage(stream UpdateGPARequestWithImage) returns (UpdateGPAResponseWithImage);
+  rpc AddGPA(stream AddGPARequest) returns (AddGPAResponse);
 }

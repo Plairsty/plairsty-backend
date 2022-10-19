@@ -8,7 +8,9 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"log"
+	"time"
 )
 
 type CertificateRepository struct {
@@ -37,23 +39,36 @@ func (r CertificateRepository) Insert(
 	}
 
 	query := `
-		INSERT INTO certifications (user_id, title, description, url, cert_id, created_at, updated_at, allotted_date, expiry, type, level, category, issuer, domain)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+		INSERT INTO certifications (user_id, title, description, url, cert_id, allotted_date, expiry, type, level, category, issuer, domain)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 		RETURNING id`
+	var startDate time.Time
+	var endDate time.Time
+	if certificate.GetAllocatedDate() != nil {
+		startDate = certificate.GetAllocatedDate().AsTime()
+		startDate = startDate.Add(time.Duration(certificate.AllocatedDate.Seconds))
+		startDate = startDate.AddDate(0, 0, 1)
+	}
+	if certificate.GetExpiryDate() != nil {
+		endDate = certificate.GetExpiryDate().AsTime()
+		endDate = endDate.Add(time.Duration(certificate.GetExpiryDate().GetSeconds()))
+		endDate = endDate.AddDate(0, 0, 1)
+	}
 	args := []interface{}{
 		userId,
 		certificate.GetTitle(),
 		certificate.GetDescription(),
 		res.Location,
 		certificate.GetCertificateId(),
-		certificate.GetAllocatedDate(),
-		certificate.GetExpiryDate(),
+		startDate,
+		endDate,
 		certificate.GetCertificateType(),
 		certificate.GetCertificateLevel(),
 		certificate.GetCertificateCategory(),
 		certificate.GetCertificateIssuer(),
 		certificate.GetDomain(),
 	}
+	log.Println("[SENSITIVE] Args : ", args)
 	var id int64
 	err = r.DB.QueryRow(query, args...).Scan(&id)
 	if err != nil {
@@ -70,20 +85,31 @@ func (r CertificateRepository) Get(id int64) (*certificatePb.CertificateFields, 
 		FROM certifications
 		WHERE cert_id = $1`
 	var certificate certificatePb.CertificateFields
+	var startDate time.Time
+	var endDate time.Time
 	err := r.DB.QueryRow(query, id).Scan(
 		&certificate.Id,
 		&certificate.Title,
 		&certificate.Description,
 		&certificate.CertificateFileUrl,
 		&certificate.CertificateId,
-		&certificate.AllocatedDate,
-		&certificate.ExpiryDate,
+		&startDate,
+		&endDate,
 		&certificate.CertificateType,
 		&certificate.CertificateLevel,
 		&certificate.CertificateCategory,
 		&certificate.CertificateIssuer,
 		&certificate.Domain,
 	)
+	certificate.AllocatedDate = &timestamppb.Timestamp{
+		Seconds: startDate.Unix(),
+		Nanos:   int32(startDate.Nanosecond()),
+	}
+
+	certificate.ExpiryDate = &timestamppb.Timestamp{
+		Seconds: endDate.Unix(),
+		Nanos:   int32(endDate.Nanosecond()),
+	}
 	if err != nil {
 		log.Println("[ERROR] Error while getting certificate data", err)
 		return nil, err
@@ -111,20 +137,31 @@ func (r CertificateRepository) GetAll(id int64) ([]*certificatePb.CertificateFie
 	var certificates []*certificatePb.CertificateFields
 	for rows.Next() {
 		var certificate certificatePb.CertificateFields
+		var startDate time.Time
+		var endDate time.Time
 		err := rows.Scan(
 			&certificate.Id,
 			&certificate.Title,
 			&certificate.Description,
 			&certificate.CertificateFileUrl,
 			&certificate.CertificateId,
-			&certificate.AllocatedDate,
-			&certificate.ExpiryDate,
+			&startDate,
+			&endDate,
 			&certificate.CertificateType,
 			&certificate.CertificateLevel,
 			&certificate.CertificateCategory,
 			&certificate.CertificateIssuer,
 			&certificate.Domain,
 		)
+		certificate.AllocatedDate = &timestamppb.Timestamp{
+			Seconds: startDate.Unix(),
+			Nanos:   int32(startDate.Nanosecond()),
+		}
+
+		certificate.ExpiryDate = &timestamppb.Timestamp{
+			Seconds: endDate.Unix(),
+			Nanos:   int32(endDate.Nanosecond()),
+		}
 		if err != nil {
 			log.Println("[ERROR] Error while getting certificate data", err)
 			return nil, err
