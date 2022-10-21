@@ -60,12 +60,12 @@ func (app *Application) Login(
 	}, nil
 }
 
-func (app *Application) Logout(
-	_ context.Context,
-	_ *authPb.LogoutRequest,
-) (*authPb.LogoutResponse, error) {
-	panic("implement me")
-}
+//func (app *Application) Logout(
+//	_ context.Context,
+//	_ *authPb.LogoutRequest,
+//) (*authPb.LogoutResponse, error) {
+//	//panic("implement me")
+//}
 
 func (app *Application) Authorize(
 	ctx context.Context,
