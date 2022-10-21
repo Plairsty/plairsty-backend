@@ -68,7 +68,6 @@ func (r CertificateRepository) Insert(
 		certificate.GetCertificateIssuer(),
 		certificate.GetDomain(),
 	}
-	log.Println("[SENSITIVE] Args : ", args)
 	var id int64
 	err = r.DB.QueryRow(query, args...).Scan(&id)
 	if err != nil {
