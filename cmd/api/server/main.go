@@ -6,8 +6,11 @@ import (
 	"awesomeProject/internal/infrastructure/service"
 	jobApplicationPb "awesomeProject/internal/proto/application"
 	authPb "awesomeProject/internal/proto/auth"
+	certificatePb "awesomeProject/internal/proto/certificates"
 	sys "awesomeProject/internal/proto/health"
 	hrPb "awesomeProject/internal/proto/hr"
+	internshipPb "awesomeProject/internal/proto/internship"
+	projectPb "awesomeProject/internal/proto/project"
 	resumePb "awesomeProject/internal/proto/resume"
 	studentPb "awesomeProject/internal/proto/student"
 	"awesomeProject/utils"
@@ -71,7 +74,6 @@ func main() {
 		ApiId:    os.Getenv("AWS_ACCESS_KEY_ID"),
 		ApiToken: os.Getenv("AWS_SECRET_ACCESS_KEY"),
 	}
-	log.Println("API ID: ", os.Getenv("AWS_SECRET_ACCESS_KEY"))
 	jwtManager := service.NewJwtManager(
 		os.Getenv("PLAIRSTY_JWT_SECRET"),
 		os.Getenv("PLAIRSTY_JWT_ISSUER"),
@@ -118,6 +120,9 @@ func main() {
 	resumePb.RegisterResumeServiceServer(server, app)
 	hrPb.RegisterHrServiceServer(server, app)
 	jobApplicationPb.RegisterJobApplicationServiceServer(server, app)
+	certificatePb.RegisterCertificateServiceServer(server, app)
+	internshipPb.RegisterInternshipServiceServer(server, app)
+	projectPb.RegisterProjectServiceServer(server, app)
 
 	// register reflection service on gRPC server.
 	reflection.Register(server)

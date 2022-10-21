@@ -2,11 +2,11 @@ package persistence
 
 import (
 	resumePb "awesomeProject/internal/proto/resume"
+	"awesomeProject/utils"
 	"bytes"
 	"database/sql"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
@@ -26,15 +26,7 @@ type ResumeRepository struct {
 func (r ResumeRepository) Insert(resume *resumePb.Resume, id int) error {
 	file := resume.Data
 	f := bytes.NewReader(file)
-	cred := credentials.NewStaticCredentials(
-		r.S3.ApiId, r.S3.ApiToken, "",
-	)
-	s3session := session.Must(session.NewSession(
-		&aws.Config{
-			Region:      aws.String(r.S3.Region),
-			Credentials: cred,
-		}))
-	uploader := s3manager.NewUploader(s3session)
+	uploader := utils.S3Uploader(r.S3.ApiId, r.S3.ApiToken, r.S3.Region)
 	key := fmt.Sprintf("%s%d.pdf", r.S3.Key, id)
 	res, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(r.S3.Bucket),
@@ -48,12 +40,13 @@ func (r ResumeRepository) Insert(resume *resumePb.Resume, id int) error {
 	}
 	// Insert the resume into db, overwrite if already exists
 	query := `
-			INSERT INTO resume (student_id, resume_url)
+			INSERT INTO resume (student_id, file_key)
 			VALUES ($1, $2)
 			ON CONFLICT (student_id)
-			DO UPDATE SET resume_url = $2`
+			DO UPDATE SET file_key = $2`
 	_, err = r.DB.Exec(query, id, res.Location)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 	return nil
@@ -63,9 +56,10 @@ func (r ResumeRepository) Insert(resume *resumePb.Resume, id int) error {
 // here id is student id
 func (r ResumeRepository) Get(id int64) (string, error) {
 	var resumeUrl string
-	query := `SELECT resume_url FROM resume WHERE student_id=$1`
+	query := `SELECT file_key FROM resume WHERE student_id=$1`
 	err := r.DB.QueryRow(query, id).Scan(&resumeUrl)
 	if err != nil {
+		log.Println(err)
 		return "", err
 	}
 	return resumeUrl, nil
@@ -73,12 +67,13 @@ func (r ResumeRepository) Get(id int64) (string, error) {
 
 func (r ResumeRepository) InsertUrl(url string, id int) error {
 	query := `
-			INSERT INTO resume (student_id, resume_url) 
+			INSERT INTO resume (student_id, file_key) 
 			VALUES ($1, $2) 
 			ON CONFLICT (student_id) 
-    		DO UPDATE SET resume_url = $2`
+    		DO UPDATE SET file_key = $2`
 	_, err := r.DB.Exec(query, id, url)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 	return nil
@@ -107,6 +102,7 @@ func (r ResumeRepository) Delete(id int64) error {
 	query := `DELETE FROM resume WHERE student_id=$1`
 	_, err = r.DB.Exec(query, id)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 	return nil

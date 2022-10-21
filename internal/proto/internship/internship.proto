@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package internship;
+option go_package = "internship/internshipPb";
+import "google/protobuf/timestamp.proto";
+
+message Internship_fields {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string location = 4;
+  string company = 5;
+  google.protobuf.Timestamp start_date = 6;
+  google.protobuf.Timestamp end_date = 7;
+  string mentor_name = 10;
+}
+
+message AddInternshipRequest {
+  int64 userId = 1;
+  Internship_fields internship = 2;
+}
+
+message AddInternshipResponse {
+  string message = 1;
+}
+
+message GetInternshipRequest {
+  int64 userId = 1;
+  int64 internshipId = 2;
+}
+
+message GetInternshipResponse {
+  Internship_fields internship = 1;
+}
+
+message GetAllInternshipsRequest {
+  int64 userId = 1;
+}
+
+message GetAllInternshipsResponse {
+  repeated Internship_fields internships = 1;
+}
+
+message UpdateInternshipRequest {
+  int64 userId = 1;
+  Internship_fields internship = 2;
+}
+
+message UpdateInternshipResponse {
+  string message = 1;
+}
+
+message DeleteInternshipRequest {
+  int64 userId = 1;
+  int64 internshipId = 2;
+}
+
+message DeleteInternshipResponse {
+  string message = 1;
+}
+
+service InternshipService {
+  rpc AddInternship(AddInternshipRequest) returns (AddInternshipResponse);
+  rpc GetInternship(GetInternshipRequest) returns (GetInternshipResponse);
+  rpc GetAllInternships(GetAllInternshipsRequest) returns (GetAllInternshipsResponse);
+  rpc UpdateInternship(UpdateInternshipRequest) returns (UpdateInternshipResponse);
+  rpc DeleteInternship(DeleteInternshipRequest) returns (DeleteInternshipResponse);
+}
+

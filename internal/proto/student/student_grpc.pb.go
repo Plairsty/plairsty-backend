@@ -32,6 +32,8 @@ type StudentServiceClient interface {
 	IsProfileCompleted(ctx context.Context, in *IsProfileCompletedRequest, opts ...grpc.CallOption) (*IsProfileCompletedResponse, error)
 	GetGPA(ctx context.Context, in *GPARequest, opts ...grpc.CallOption) (*GPAResponse, error)
 	UpdateGPA(ctx context.Context, in *UpdateGPARequest, opts ...grpc.CallOption) (*UpdateGPAResponse, error)
+	UpdateGPAWithImage(ctx context.Context, opts ...grpc.CallOption) (StudentService_UpdateGPAWithImageClient, error)
+	AddGPA(ctx context.Context, opts ...grpc.CallOption) (StudentService_AddGPAClient, error)
 }
 
 type studentServiceClient struct {
@@ -105,6 +107,74 @@ func (c *studentServiceClient) UpdateGPA(ctx context.Context, in *UpdateGPAReque
 	return out, nil
 }
 
+func (c *studentServiceClient) UpdateGPAWithImage(ctx context.Context, opts ...grpc.CallOption) (StudentService_UpdateGPAWithImageClient, error) {
+	stream, err := c.cc.NewStream(ctx, &StudentService_ServiceDesc.Streams[0], "/student.StudentService/UpdateGPAWithImage", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &studentServiceUpdateGPAWithImageClient{stream}
+	return x, nil
+}
+
+type StudentService_UpdateGPAWithImageClient interface {
+	Send(*UpdateGPARequestWithImage) error
+	CloseAndRecv() (*UpdateGPAResponseWithImage, error)
+	grpc.ClientStream
+}
+
+type studentServiceUpdateGPAWithImageClient struct {
+	grpc.ClientStream
+}
+
+func (x *studentServiceUpdateGPAWithImageClient) Send(m *UpdateGPARequestWithImage) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *studentServiceUpdateGPAWithImageClient) CloseAndRecv() (*UpdateGPAResponseWithImage, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(UpdateGPAResponseWithImage)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *studentServiceClient) AddGPA(ctx context.Context, opts ...grpc.CallOption) (StudentService_AddGPAClient, error) {
+	stream, err := c.cc.NewStream(ctx, &StudentService_ServiceDesc.Streams[1], "/student.StudentService/AddGPA", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &studentServiceAddGPAClient{stream}
+	return x, nil
+}
+
+type StudentService_AddGPAClient interface {
+	Send(*AddGPARequest) error
+	CloseAndRecv() (*AddGPAResponse, error)
+	grpc.ClientStream
+}
+
+type studentServiceAddGPAClient struct {
+	grpc.ClientStream
+}
+
+func (x *studentServiceAddGPAClient) Send(m *AddGPARequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *studentServiceAddGPAClient) CloseAndRecv() (*AddGPAResponse, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(AddGPAResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // StudentServiceServer is the server API for StudentService service.
 // All implementations must embed UnimplementedStudentServiceServer
 // for forward compatibility
@@ -119,6 +189,8 @@ type StudentServiceServer interface {
 	IsProfileCompleted(context.Context, *IsProfileCompletedRequest) (*IsProfileCompletedResponse, error)
 	GetGPA(context.Context, *GPARequest) (*GPAResponse, error)
 	UpdateGPA(context.Context, *UpdateGPARequest) (*UpdateGPAResponse, error)
+	UpdateGPAWithImage(StudentService_UpdateGPAWithImageServer) error
+	AddGPA(StudentService_AddGPAServer) error
 	mustEmbedUnimplementedStudentServiceServer()
 }
 
@@ -146,6 +218,12 @@ func (UnimplementedStudentServiceServer) GetGPA(context.Context, *GPARequest) (*
 }
 func (UnimplementedStudentServiceServer) UpdateGPA(context.Context, *UpdateGPARequest) (*UpdateGPAResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateGPA not implemented")
+}
+func (UnimplementedStudentServiceServer) UpdateGPAWithImage(StudentService_UpdateGPAWithImageServer) error {
+	return status.Errorf(codes.Unimplemented, "method UpdateGPAWithImage not implemented")
+}
+func (UnimplementedStudentServiceServer) AddGPA(StudentService_AddGPAServer) error {
+	return status.Errorf(codes.Unimplemented, "method AddGPA not implemented")
 }
 func (UnimplementedStudentServiceServer) mustEmbedUnimplementedStudentServiceServer() {}
 
@@ -286,6 +364,58 @@ func _StudentService_UpdateGPA_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StudentService_UpdateGPAWithImage_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(StudentServiceServer).UpdateGPAWithImage(&studentServiceUpdateGPAWithImageServer{stream})
+}
+
+type StudentService_UpdateGPAWithImageServer interface {
+	SendAndClose(*UpdateGPAResponseWithImage) error
+	Recv() (*UpdateGPARequestWithImage, error)
+	grpc.ServerStream
+}
+
+type studentServiceUpdateGPAWithImageServer struct {
+	grpc.ServerStream
+}
+
+func (x *studentServiceUpdateGPAWithImageServer) SendAndClose(m *UpdateGPAResponseWithImage) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *studentServiceUpdateGPAWithImageServer) Recv() (*UpdateGPARequestWithImage, error) {
+	m := new(UpdateGPARequestWithImage)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _StudentService_AddGPA_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(StudentServiceServer).AddGPA(&studentServiceAddGPAServer{stream})
+}
+
+type StudentService_AddGPAServer interface {
+	SendAndClose(*AddGPAResponse) error
+	Recv() (*AddGPARequest, error)
+	grpc.ServerStream
+}
+
+type studentServiceAddGPAServer struct {
+	grpc.ServerStream
+}
+
+func (x *studentServiceAddGPAServer) SendAndClose(m *AddGPAResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *studentServiceAddGPAServer) Recv() (*AddGPARequest, error) {
+	m := new(AddGPARequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // StudentService_ServiceDesc is the grpc.ServiceDesc for StudentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -322,6 +452,17 @@ var StudentService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _StudentService_UpdateGPA_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "UpdateGPAWithImage",
+			Handler:       _StudentService_UpdateGPAWithImage_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "AddGPA",
+			Handler:       _StudentService_AddGPA_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "internal/proto/student/student.proto",
 }

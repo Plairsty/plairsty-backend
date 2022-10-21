@@ -1,0 +1,8 @@
+ALTER TABLE IF EXISTS students DROP COLUMN IF EXISTS semester1_gpa_url;
+ALTER TABLE IF EXISTS students DROP COLUMN IF EXISTS semester2_gpa_url;
+ALTER TABLE IF EXISTS students DROP COLUMN IF EXISTS semester3_gpa_url;
+ALTER TABLE IF EXISTS students DROP COLUMN IF EXISTS semester4_gpa_url;
+ALTER TABLE IF EXISTS students DROP COLUMN IF EXISTS semester5_gpa_url;
+ALTER TABLE IF EXISTS students DROP COLUMN IF EXISTS semester6_gpa_url;
+ALTER TABLE IF EXISTS students DROP COLUMN IF EXISTS semester7_gpa_url;
+ALTER TABLE IF EXISTS students DROP COLUMN IF EXISTS semester8_gpa_url;

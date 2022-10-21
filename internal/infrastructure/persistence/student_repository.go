@@ -15,8 +15,8 @@ type studentRepository struct {
 /// Currently I'm assuming that we won't be getting student phone
 func (r studentRepository) Insert(student *studentPb.Student) error {
 	query := `
-		INSERT INTO students (first_name, middle_name, last_name, email, moodle, status)
-		VALUES ($1, $2, $3, $4, $5, $6)
+		INSERT INTO students (first_name, middle_name, last_name, email, moodle, status, image_url)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING id, created_at`
 	args := []interface{}{
 		strings.Trim(student.FirstName, " "),
@@ -25,6 +25,7 @@ func (r studentRepository) Insert(student *studentPb.Student) error {
 		strings.Trim(student.Email, " "),
 		strings.Trim(student.Username, " "),
 		true,
+		strings.Trim(student.ImageUrl, " "),
 	}
 	err := r.DB.QueryRow(query, args...).Scan(&student.Id, &student.ImageUrl)
 	if err != nil {

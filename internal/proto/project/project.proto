@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package project;
+option go_package = "project/projectPb";
+import "google/protobuf/timestamp.proto";
+
+enum STATUS {
+  STATUS_ADDED = 0;
+  STATUS_DELETED = 1;
+  STATUS_MODIFIED = 2;
+  STATUS_FAILED = 3;
+}
+
+message Project_fields {
+  int64 id = 1;
+  string name = 2;
+  string description = 3; // Your contribution
+  string leader = 4;
+  repeated string members_username = 5; // moodle username
+  google.protobuf.Timestamp start_date = 6;
+  google.protobuf.Timestamp end_date = 7;
+  string guide_name = 8;
+  string project_url = 9;
+  int64 semester = 10;
+}
+
+message AddProjectRequest {
+  string username = 1;
+  Project_fields project = 2;
+}
+
+message AddProjectResponse {
+  STATUS status = 1;
+}
+
+message GetProjectRequest {
+  string username = 1;
+  int64 project_id = 2;
+}
+
+message GetProjectResponse {
+  Project_fields project = 2;
+}
+
+message GetProjectsRequest {
+  string username = 1;
+}
+
+message GetProjectsResponse {
+  repeated Project_fields projects = 1;
+}
+
+message UpdateProjectRequest {
+  string username = 1;
+  Project_fields project = 2;
+}
+
+message UpdateProjectResponse {
+  STATUS status = 1;
+}
+
+message DeleteProjectRequest {
+  string username = 1;
+  int64 project_id = 2;
+}
+
+message DeleteProjectResponse {
+  STATUS status = 1;
+}
+
+message GetProjectsBySemesterRequest {
+  string username = 1;
+  int64 semester = 2;
+}
+
+message GetProjectsBySemesterResponse {
+  repeated Project_fields projects = 1;
+}
+
+service ProjectService {
+  rpc AddProject(AddProjectRequest) returns (AddProjectResponse);
+  rpc GetProject(GetProjectRequest) returns (GetProjectResponse);
+  rpc GetProjects(GetProjectsRequest) returns (GetProjectsResponse);
+  rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse);
+  rpc DeleteProject(DeleteProjectRequest) returns (DeleteProjectResponse);
+  rpc GetProjectsBySemester(GetProjectsBySemesterRequest) returns (GetProjectsBySemesterResponse);
+}
