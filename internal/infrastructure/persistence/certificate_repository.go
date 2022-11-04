@@ -26,7 +26,7 @@ func (r CertificateRepository) Insert(
 	file := certificateData.GetData()
 	f := bytes.NewReader(file)
 	uploader := utils.S3Uploader(r.S3.ApiId, r.S3.ApiToken, r.S3.Region)
-	key := fmt.Sprintf("%s%d.pdf", r.S3.Key, userId)
+	key := fmt.Sprintf("%s%s%d.pdf", r.S3.Key, certificate.CertificateId, userId)
 	res, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(r.S3.Bucket),
 		Key:    aws.String(key),
